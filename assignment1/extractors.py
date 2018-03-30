@@ -1,6 +1,5 @@
-from Movie import Movie
 
-def movies_extract(path):
+def extract_data(path, clazz):
 
     with open(path) as f:
         content = f.readlines()
@@ -8,8 +7,8 @@ def movies_extract(path):
     # Remove whitespaces and \n
     content = [x.strip() for x in content]
 
-    movies = []
+    data = []
     for line in content:
-        movies.append(Movie(line))
+        data.append(clazz(line))
 
-    return movies
+    return data
