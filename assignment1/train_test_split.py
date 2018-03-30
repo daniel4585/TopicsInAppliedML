@@ -1,5 +1,5 @@
 import random
-
+import numpy as np
 
 def train_test_split(rating_list):
     train = []
@@ -26,3 +26,9 @@ def train_test_split(rating_list):
     return train, test
 
 
+def create_data_matrix(data, num_users, num_movies):
+
+    R = np.zeros(shape=(num_users, num_movies))
+    for rating in data:
+        R[rating.user_id, rating.movie_id] = rating.rating
+    return R

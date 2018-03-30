@@ -5,7 +5,7 @@ class User(object):
         self.line = line
 
         splitted = line.split("::")
-        self.id = splitted[0]
+        self.id = int(splitted[0])
         self.gender = splitted[1]
         self.age = splitted[2]
         self.occupation = splitted[3]

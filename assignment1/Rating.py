@@ -5,9 +5,9 @@ class Rating(object):
         self.line = line
 
         splitted = line.split("::")
-        self.user_id = splitted[0]
-        self.movie_id = splitted[1]
-        self.rating = splitted[2]
+        self.user_id = int(splitted[0])
+        self.movie_id = int(splitted[1])
+        self.rating = int(splitted[2])
         self.timestamp = splitted[2]
 
 
