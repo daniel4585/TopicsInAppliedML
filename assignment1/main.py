@@ -1,5 +1,6 @@
 from assignment1.train_test_split import *
-from extractors import *
+from extractors import extract_data
+
 from Movie import Movie
 from User import User
 from Rating import Rating
@@ -13,11 +14,6 @@ def main():
     ratings = extract_data("data/ratings.dat", Rating)
     train, test = train_test_split(ratings)
     R = create_data_matrix(train, NUM_USERS, NUM_MOVIES)
-
-    print R[2]
-    print "---"
-
-
 
 if __name__ == '__main__':
     main()
