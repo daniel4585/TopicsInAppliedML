@@ -18,10 +18,13 @@ def main():
     train, test = train_test_split(ratings)
     R = create_data_matrix(train, NUM_USERS, NUM_MOVIES)
 
-    lamb = Lambda(lambda_u=0.01, lambda_v=0.01, lambda_b_u=0.01, lambda_b_v=0.01)
+    regularization = 0.2
+    lamb = Lambda(lambda_u=regularization, lambda_v=regularization, lambda_b_u=regularization, lambda_b_v=regularization)
     model = MFModel(R, K=20, lamb=lamb)
 
-    LearnModelFromDataUsingSGD(R, model, Parameters(steps=10, alpha=0.03))
+    LearnModelFromDataUsingSGD(R, model, Parameters(steps=10, alpha=0.1))
+
+    print(MFModel)
 
 
 if __name__ == '__main__':
