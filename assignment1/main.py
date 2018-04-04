@@ -24,8 +24,6 @@ def main():
 
     LearnModelFromDataUsingSGD(R, model, Parameters(steps=10, alpha=0.1))
 
-    print(MFModel)
-
 
 if __name__ == '__main__':
     main()
