@@ -1,13 +1,15 @@
 from MFModel import MFModel
-from assignment1.train_test_split import *
-from extractors import extract_data
+from GradientDecent import LearnModelFromDataUsingSGD, Parameters
+from Lambda import Lambda
+from utils import *
 
 from Movie import Movie
 from User import User
 from Rating import Rating
 
-NUM_USERS = 6041 # One more than actual number of Users
-NUM_MOVIES = 3953 # One more than actual number of Movies
+NUM_USERS = 6041  # One more than actual number of Users
+NUM_MOVIES = 3953  # One more than actual number of Movies
+
 
 def main():
     movies = extract_data("data/movies.dat", Movie)
@@ -16,7 +18,11 @@ def main():
     train, test = train_test_split(ratings)
     R = create_data_matrix(train, NUM_USERS, NUM_MOVIES)
 
-    model = MFModel(R)
+    lamb = Lambda(lambda_u=0.01, lambda_v=0.01, lambda_b_u=0.01, lambda_b_v=0.01)
+    model = MFModel(R, K=20, lamb=lamb)
+
+    LearnModelFromDataUsingSGD(R, model, Parameters(steps=10, alpha=0.03))
+
 
 if __name__ == '__main__':
     main()

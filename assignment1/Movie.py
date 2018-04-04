@@ -1,4 +1,3 @@
-
 class Movie(object):
     def __init__(self, line):
         super(Movie, self)
@@ -11,6 +10,3 @@ class Movie(object):
 
     def __str__(self):
         return self.line
-
-
-
