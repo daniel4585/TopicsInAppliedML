@@ -1,9 +1,11 @@
 import numpy as np
 
 
-class Parameters(object):
-    def __init__(self):
+class Parameters(object, ):
+    def __init__(self, convergence_threshold):
         super(Parameters, self).__init__()
+        self.convergence_threshold = convergence_threshold
+
 
 
 def LearnModelFromDataUsingALS(data, mfmodel, parameters):
