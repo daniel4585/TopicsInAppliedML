@@ -35,6 +35,6 @@ class MFModel(object):
             error += self.lamb.lambda_u * np.linalg.norm(self.u[i, :], ord=2) ** 2 / 2
 
         error += self.lamb.lambda_b_u * (self.b_m**2).sum() / 2
-        error += self.lamb.lambda_b_u * (self.b_n**2).sum() / 2
+        error += self.lamb.lambda_b_v * (self.b_n**2).sum() / 2
 
         return error

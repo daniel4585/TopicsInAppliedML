@@ -13,22 +13,39 @@ def LearnModelFromDataUsingALS(data, mfmodel, parameters):
     while abs(last_e - e) > parameters.convergence_threshold:
 
         # Precompute variables
-        YTY = mfmodel.u.T.dot(mfmodel.u)
+        u_with_bias = np.concatenate((mfmodel.u, np.ones((M, 1))), axis=1)
+        v_with_bias = np.concatenate((mfmodel.v, np.expand_dims(mfmodel.b_n, axis=1)), axis=1)
+
+        YTY = u_with_bias.T.dot(u_with_bias)
         lambdaI = np.eye(YTY.shape[0]) * mfmodel.lamb.lambda_v
-        r = data - mfmodel.mu
+        r = data - mfmodel.mu - mfmodel.b_m[np.newaxis, :].T
 
         # Update latent variables
         for n in range(N):
-            mfmodel.v[n, :] = np.linalg.solve((YTY + lambdaI), r[:, n].dot(mfmodel.u))
+            v_with_bias[n, :] = np.linalg.solve((YTY + lambdaI), r[:, n].dot(u_with_bias))
+
+        # Extract variables and bias
+        mfmodel.v = v_with_bias[:, :-1]
+        mfmodel.b_n = v_with_bias[:, -1]
+
 
         # Precompute variables
-        XTX = mfmodel.v.T.dot(mfmodel.v)
+        u_with_bias = np.concatenate((mfmodel.u, np.expand_dims(mfmodel.b_m, axis=1)), axis=1)
+        v_with_bias = np.concatenate((mfmodel.v, np.ones((N, 1))), axis=1)
+
+        XTX = v_with_bias.T.dot(v_with_bias)
         lambdaI = np.eye(XTX.shape[0]) * mfmodel.lamb.lambda_u
+        r = data - mfmodel.mu - mfmodel.b_n[:, np.newaxis].T
 
         # Update latent variables
         for m in range(M):
-            mfmodel.u[m, :] = np.linalg.solve((XTX + lambdaI), r[m, :].dot(mfmodel.v))
+            u_with_bias[m, :] = np.linalg.solve((XTX + lambdaI), r[m, :].dot(v_with_bias))
 
+        # Extract variables and bias
+        mfmodel.u = u_with_bias[:, :-1]
+        mfmodel.b_m = u_with_bias[:, -1]
+
+        # Summarize step
         predicted = mfmodel.calc_matrix()
         last_e = e
         e = mfmodel.mean_squared_error(predicted)
