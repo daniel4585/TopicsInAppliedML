@@ -1,5 +1,5 @@
 from MFModel import MFModel
-from GradientDecent import LearnModelFromDataUsingSGD, Parameters
+from GradientDecent import LearnModelFromDataUsingSGD, SGDParameters
 from Lambda import Lambda
 from AlternatingLeastSquares import LearnModelFromDataUsingALS, ALSParameters
 from utils import *
@@ -9,8 +9,8 @@ from Rating import Rating
 import pickle
 
 
-NUM_USERS = 6041  # One more than actual number of Users
-NUM_MOVIES = 3953  # One more than actual number of Movies
+NUM_USERS = 6040
+NUM_MOVIES = 3952
 
 
 def main():
@@ -21,18 +21,22 @@ def main():
     # R = create_data_matrix(train, NUM_USERS, NUM_MOVIES)
     #
     # with open('R.pkl', 'wb') as output:
-    #     pickle.dump(R, output, pickle.HIGHEST_PROTOCOL)
-
+    #      pickle.dump(R, output, pickle.HIGHEST_PROTOCOL)
 
     with open('R.pkl', 'rb') as input:
         R = pickle.load(input)
 
-    regularization = 0.2
-    lamb = Lambda(lambda_u=regularization, lambda_v=regularization, lambda_b_u=regularization, lambda_b_v=regularization)
-    model = MFModel(R, K=20, lamb=lamb)
+    # regularization = 0.1
+    # lamb = Lambda(lambda_u=regularization, lambda_v=regularization, lambda_b_u=regularization,
+    #               lambda_b_v=regularization)
+    # model = MFModel(R, K=20, lamb=lamb)
+    # LearnModelFromDataUsingSGD(R, model, SGDParameters(steps=10, alpha=0.01))
 
-    # LearnModelFromDataUsingSGD(R, model, Parameters(steps=10, alpha=0.1))
-    LearnModelFromDataUsingALS(R, model, ALSParameters(convergence_threshold=10, lamb=0.1))
+    regularization = 0.01
+    lamb = Lambda(lambda_u=regularization, lambda_v=regularization, lambda_b_u=regularization,
+                  lambda_b_v=regularization)
+    model = MFModel(R, K=20, lamb=lamb)
+    LearnModelFromDataUsingALS(R, model, ALSParameters(convergence_threshold=30))
 
 
 if __name__ == '__main__':

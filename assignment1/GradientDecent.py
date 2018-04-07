@@ -3,15 +3,14 @@ import numpy as np
 from MFModel import MFModel
 
 
-class Parameters(object):
+class SGDParameters(object):
     def __init__(self, steps, alpha):
-        super(Parameters, self).__init__()
+        super(SGDParameters, self).__init__()
         self.steps = steps
         self.alpha = alpha
 
 
 def LearnModelFromDataUsingSGD(data, mfmodel, parameters):
-
     for step in range(parameters.steps):
         xs, ys = data.nonzero()
         for x, y in zip(xs, ys):
@@ -44,6 +43,3 @@ def gradient_decent_update(sample, mfmodel, parameters):
     if e > 200 or e < -200:
         print(sample)
         print(e)
-
-
-

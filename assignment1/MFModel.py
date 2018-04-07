@@ -28,13 +28,13 @@ class MFModel(object):
         for x, y in zip(xs, ys):
             error += pow(self.R[x, y] - predicted[x, y], 2) / 2
 
-        # for i in range(self.num_movies):
-        #     error += self.lamb.lambda_v * np.linalg.norm(self.v[i, :], ord=2) ** 2 / 2
-        #
-        # for i in range(self.num_users):
-        #     error += self.lamb.lambda_u * np.linalg.norm(self.u[i, :], ord=2) ** 2 / 2
-        #
-        # error += self.lamb.lambda_b_u * (self.b_m**2).sum() / 2
-        # error += self.lamb.lambda_b_u * (self.b_n**2).sum() / 2
+        for i in range(self.num_movies):
+            error += self.lamb.lambda_v * np.linalg.norm(self.v[i, :], ord=2) ** 2 / 2
+
+        for i in range(self.num_users):
+            error += self.lamb.lambda_u * np.linalg.norm(self.u[i, :], ord=2) ** 2 / 2
+
+        error += self.lamb.lambda_b_u * (self.b_m**2).sum() / 2
+        error += self.lamb.lambda_b_u * (self.b_n**2).sum() / 2
 
         return error
