@@ -1,16 +1,29 @@
 import numpy as np
 
+from assignment1.utils import write_error_to_file, mean_squared_error
+
+
 class ALSParameters(object):
     def __init__(self, convergence_threshold):
         super(ALSParameters, self).__init__()
         self.convergence_threshold = convergence_threshold
 
 
-def LearnModelFromDataUsingALS(data, mfmodel, parameters):
+def LearnModelFromDataUsingALS(data, mfmodel, parameters, extra_data_set=None):
     e = float("inf")
     last_e = float("-Inf")
     M, N = data.shape
     while abs(last_e - e) > parameters.convergence_threshold:
+
+        predicted = mfmodel.calc_matrix()
+        write_error_to_file(mfmodel, predicted, data, "data_set_1.txt")
+        # if extra_data_set is not None:
+        #     write_error_to_file(mfmodel, predicted, data, "data_set_2.txt")
+
+        last_e = e
+        e = mean_squared_error(mfmodel, predicted, data)
+        print("Error: %f" % e)
+
 
         # Precompute variables
         u_with_bias = np.concatenate((mfmodel.u, np.ones((M, 1))), axis=1)
@@ -44,10 +57,4 @@ def LearnModelFromDataUsingALS(data, mfmodel, parameters):
         # Extract variables and bias
         mfmodel.u = u_with_bias[:, :-1]
         mfmodel.b_m = u_with_bias[:, -1]
-
-        # Summarize step
-        predicted = mfmodel.calc_matrix()
-        last_e = e
-        e = mfmodel.mean_squared_error(predicted)
-        print("Error: %f" % e)
 

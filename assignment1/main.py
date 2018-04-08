@@ -29,7 +29,7 @@ def main():
     # regularization = 0.1
     # lamb = Lambda(lambda_u=regularization, lambda_v=regularization, lambda_b_u=regularization,
     #               lambda_b_v=regularization)
-    # model = MFModel(R, K=20, lamb=lamb)
+    # model = MFModel(R, K=50, lamb=lamb)
     # LearnModelFromDataUsingSGD(R, model, SGDParameters(steps=10, alpha=0.01))
 
     regularization = 0.03

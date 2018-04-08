@@ -46,3 +46,26 @@ def extract_data(path, clazz):
         data.append(clazz(line))
 
     return data
+
+def mean_squared_error(mfmodel, predicted, data):
+    xs, ys = data.nonzero()
+    error = 0
+    for x, y in zip(xs, ys):
+        error += pow(data[x, y] - predicted[x, y], 2) / 2
+
+    for i in range(mfmodel.num_movies):
+        error += mfmodel.lamb.lambda_v * np.linalg.norm(mfmodel.v[i, :], ord=2) ** 2 / 2
+
+    for i in range(mfmodel.num_users):
+        error += mfmodel.lamb.lambda_u * np.linalg.norm(mfmodel.u[i, :], ord=2) ** 2 / 2
+
+    error += mfmodel.lamb.lambda_b_u * (mfmodel.b_m**2).sum() / 2
+    error += mfmodel.lamb.lambda_b_v * (mfmodel.b_n**2).sum() / 2
+
+    return error
+
+
+def write_error_to_file(mfmodel, predicted, data, file_output):
+    error = mean_squared_error(mfmodel, predicted, data)
+    with open("output/" + file_output, 'a') as output:
+         output.write("error:" + str(error) + "\n")
