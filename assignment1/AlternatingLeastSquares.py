@@ -18,7 +18,7 @@ def LearnModelFromDataUsingALS(data, mfmodel, parameters):
 
         YTY = u_with_bias.T.dot(u_with_bias)
         lambdaI = np.eye(YTY.shape[0]) * mfmodel.lamb.lambda_v
-        r = data - mfmodel.mu - mfmodel.b_m[np.newaxis, :].T
+        r = (data.T - mfmodel.b_m).T - mfmodel.mu
 
         # Update latent variables
         for n in range(N):
@@ -35,7 +35,7 @@ def LearnModelFromDataUsingALS(data, mfmodel, parameters):
 
         XTX = v_with_bias.T.dot(v_with_bias)
         lambdaI = np.eye(XTX.shape[0]) * mfmodel.lamb.lambda_u
-        r = data - mfmodel.mu - mfmodel.b_n[:, np.newaxis].T
+        r = data - mfmodel.mu - mfmodel.b_n
 
         # Update latent variables
         for m in range(M):
