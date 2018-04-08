@@ -1,7 +1,8 @@
 import numpy as np
+import os, errno
 
 from MFModel import MFModel
-from assignment1.utils import write_error_to_file
+from utils import write_error_to_file
 
 
 class SGDParameters(object):
@@ -12,14 +13,20 @@ class SGDParameters(object):
 
 
 def LearnModelFromDataUsingSGD(data, mfmodel, parameters, extra_data_set=None):
+    try:
+        os.remove("output/SGD_error_1.txt")
+        os.remove("output/SGD_error_2.txt")
+    except OSError:
+        pass
+
     for step in range(parameters.steps):
 
         predicted = mfmodel.calc_matrix()
         print("Step: %s, error: %f" % (step, mfmodel.mean_squared_error(predicted)))
 
-        write_error_to_file(mfmodel, predicted, data, "data_set_1.txt")
+        write_error_to_file(mfmodel, predicted, data, "SGD_error_1.txt")
         if extra_data_set is not None:
-            write_error_to_file(mfmodel, predicted, data, "data_set_2.txt")
+            write_error_to_file(mfmodel, predicted, extra_data_set, "SGD_error_2.txt")
 
         xs, ys = data.nonzero()
         for x, y in zip(xs, ys):
