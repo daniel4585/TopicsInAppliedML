@@ -2,12 +2,8 @@ import math
 from collections import OrderedDict
 from operator import itemgetter
 
-import pickle
-
 
 def calculate_ranks(mfmodel, test):
-    bCalc = True
-
 
     predicted = mfmodel.calc_matrix()
     users_ranked_dicts = []
@@ -16,8 +12,12 @@ def calculate_ranks(mfmodel, test):
         users_ranked_dicts.append(ranked_dict_for_user(user, predicted))
         users_ground_truth.append(get_ground_truth(user, test))
 
+    print("RMSE: " + str(rmse(users_ground_truth, users_ranked_dicts)))
     print("MPR: " + str(mpr(users_ground_truth, users_ranked_dicts)))
-    print("RMSE: " + str(rmse(mfmodel, users_ground_truth, users_ranked_dicts)))
+
+    k = 10
+    print("Average P@k: " + str(patk(users_ground_truth, users_ranked_dicts, k)))
+    print("Average R@k: " + str(ratk(users_ground_truth, users_ranked_dicts, k)))
 
 
 def get_ground_truth(n, data):
@@ -37,6 +37,7 @@ def ranked_dict_for_user(n, data):
 def get_predicted_rating(users_ranked_dicts, user, movie):
     return users_ranked_dicts[user][movie]
 
+
 def get_movie_recomendation_index(users_ranked_dicts, user, movie):
     user_dict = users_ranked_dicts[user]
     index = 1
@@ -46,10 +47,11 @@ def get_movie_recomendation_index(users_ranked_dicts, user, movie):
         index += 1
     raise Exception("didnt find movie")
 
-def rmse(mfmodel, users_ground_truth, users_ranked_dicts):
+
+def rmse(users_ground_truth, users_ranked_dicts):
     error = 0
     num_of_ratings = 0
-    for user in range(mfmodel.num_users):
+    for user in range(len(users_ranked_dicts.keys())):
         user_error = 0
         num_of_ratings_per_user = len(users_ground_truth[user])
         num_of_ratings += num_of_ratings_per_user
@@ -60,7 +62,7 @@ def rmse(mfmodel, users_ground_truth, users_ranked_dicts):
             user_error += (predicted_rating - true_rating) ** 2
 
         error += user_error
-        #print("User: %d, Error: %f" % (user, math.sqrt(user_error / num_of_ratings_per_user)))
+        # print("User: %d, Error: %f" % (user, math.sqrt(user_error / num_of_ratings_per_user)))
 
     return math.sqrt(error / num_of_ratings)
 
@@ -76,3 +78,37 @@ def mpr(users_ground_truth, users_ranked_dicts):
         num_of_ratings += len(ground_truth)
         sum_user_mpr += (1.*avg_recomendation_index) / (1.*len(users_ranked_dicts[0]))
     return (1.*sum_user_mpr) / (1.*num_of_ratings)
+
+
+def patk(users_ground_truth, users_ranked_dicts, k):
+    totalTP = 0
+    for user, ranked_dict in enumerate(users_ranked_dicts):
+        TP, ground_truth = calculate_tp(k, ranked_dict, user, users_ground_truth)
+        # print("P@k = %f" % ((1. * TP) / (1. * k)))
+        totalTP += TP
+
+    return (1. * totalTP) / (1. * k * len(users_ranked_dicts))
+
+
+def ratk(users_ground_truth, users_ranked_dicts, k):
+    totalTP = 0
+    totalGroundTruths = 0
+    for user, ranked_dict in enumerate(users_ranked_dicts):
+        TP, ground_truth = calculate_tp(k, ranked_dict, user, users_ground_truth)
+        totalGroundTruths += len(ground_truth)
+        totalTP += TP
+        # print("R@k = %f" % ((1. * TP) / (1. * len(ground_truth))))
+
+    return (1. * totalTP) / (1. * totalGroundTruths)
+
+
+def calculate_tp(k, ranked_dict, user, users_ground_truth):
+    TP = 0
+    ground_truth = users_ground_truth[user]
+    for movie in ranked_dict.keys()[:k]:
+        for movie_truth, _ in ground_truth:
+            if movie == movie_truth:
+                TP += 1
+                break
+
+    return TP, ground_truth
