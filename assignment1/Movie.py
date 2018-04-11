@@ -9,4 +9,4 @@ class Movie(object):
         self.genres = splitted[2]
 
     def __str__(self):
-        return self.line
+        return str(self.id + 1) + ": " + self.title + " :: " + self.genres

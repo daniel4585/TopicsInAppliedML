@@ -19,8 +19,20 @@ class Evaluation(object):
         k = 20
         #print("Average P@k: " + str(patk(self.users_ground_truth, self.users_ranked_dicts, k)))
         #print("Average R@k: " + str(ratk(self.users_ground_truth, self.users_ranked_dicts, k)))
-        print("MAP: " + str(mean_average_precision(self.users_ground_truth, self.users_ranked_dicts, k)))
+        #print("MAP: " + str(mean_average_precision(self.users_ground_truth, self.users_ranked_dicts, k)))
 
+    def print_user_recommendation_list(self, user, h, movies, users):
+        user = user-1
+        ground_truth = self.users_ground_truth[user]
+        print "\n\nUser " + str(users[user])
+        print("History:")
+        for movie, rating in ground_truth:
+             print "Movie: " + str(movies[movie]) + " Rating: " + str(rating)
+        print "\nRecommended: "
+        for i, kv_pair in enumerate(self.users_ranked_dicts[user].items()):
+            print str(i) + ": " + str(movies[kv_pair[0]])
+            if i == h:
+                break
 
 def get_ground_truth(n, data):
     indices = data[n, :].nonzero()[0]

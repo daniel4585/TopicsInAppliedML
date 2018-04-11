@@ -16,10 +16,12 @@ NUM_MOVIES = 3952
 
 def main():
     bTrain = False
+    movies = extract_data("data/movies.dat", Movie)
+    movies_dict = dict(zip([x.id for x in movies], movies))
+    users = extract_data("data/users.dat", User)
+    users_dict = dict(zip([x.id for x in users], users))
+    ratings = extract_data("data/ratings.dat", Rating)
     if bTrain:
-        movies = extract_data("data/movies.dat", Movie)
-        users = extract_data("data/users.dat", User)
-        ratings = extract_data("data/ratings.dat", Rating)
         train, test = train_test_split(ratings)
         R_train = create_data_matrix(train, NUM_USERS, NUM_MOVIES)
         R_test = create_data_matrix(test, NUM_USERS, NUM_MOVIES)
@@ -60,6 +62,10 @@ def main():
 
     e = Evaluation()
     e.calculate_ranks(model, R_test)
+    e.print_user_recommendation_list(5, 5, movies_dict, users_dict)
+    e.print_user_recommendation_list(22, 7, movies_dict, users_dict)
+    e.print_user_recommendation_list(55, 5, movies_dict, users_dict)
+    e.print_user_recommendation_list(88, 5, movies_dict, users_dict)
 
 
 if __name__ == '__main__':
