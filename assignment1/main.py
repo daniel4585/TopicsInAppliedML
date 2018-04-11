@@ -15,7 +15,7 @@ NUM_MOVIES = 3952
 
 
 def main():
-    bTrain = True
+    bTrain = False
     if bTrain:
         movies = extract_data("data/movies.dat", Movie)
         users = extract_data("data/users.dat", User)
