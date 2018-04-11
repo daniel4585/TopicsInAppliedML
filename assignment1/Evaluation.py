@@ -12,8 +12,6 @@ def calculate_ranks(mfmodel, test):
     print("RMSE: " + str(rmse(users_ground_truth, users_ranked_lists)))
 
 
-
-
 def get_ground_truth(n, data):
     indices = data[n, :].non_zero()[0]
     return indices, data[n, indices]
