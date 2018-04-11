@@ -2,6 +2,7 @@ import numpy as np
 import os, errno
 
 from MFModel import MFModel
+from utils import mean_squared_error
 from utils import write_error_to_file
 
 
@@ -22,7 +23,7 @@ def LearnModelFromDataUsingSGD(data, mfmodel, parameters, extra_data_set=None):
     for step in range(parameters.steps):
 
         predicted = mfmodel.calc_matrix()
-        print("Step: %s, error: %f" % (step, mfmodel.mean_squared_error(predicted)))
+        print("Step: %s, error: %f" % (step, mean_squared_error(mfmodel, predicted, data)))
 
         write_error_to_file(mfmodel, predicted, data, "SGD_error_1.txt")
         if extra_data_set is not None:
