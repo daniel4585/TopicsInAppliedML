@@ -2,7 +2,7 @@ from MFModel import MFModel
 from GradientDecent import LearnModelFromDataUsingSGD, SGDParameters
 from Lambda import Lambda
 from AlternatingLeastSquares import LearnModelFromDataUsingALS, ALSParameters
-from Evaluation import calculate_ranks
+from Evaluation import calculate_ranks, Evaluation
 from utils import *
 from Movie import Movie
 from User import User
@@ -58,7 +58,8 @@ def main():
         with open('model_ALS.pkl', 'rb') as input:
             model = pickle.load(input)
 
-    calculate_ranks(model, R_test)
+    e = Evaluation()
+    e.calculate_ranks(model, R_test)
 
 
 if __name__ == '__main__':

@@ -3,21 +3,22 @@ from collections import OrderedDict
 from operator import itemgetter
 
 
-def calculate_ranks(mfmodel, test):
-
-    predicted = mfmodel.calc_matrix()
+class Evaluation(object):
     users_ranked_dicts = []
     users_ground_truth = []
-    for user in range(mfmodel.num_users/20):
-        users_ranked_dicts.append(ranked_dict_for_user(user, predicted))
-        users_ground_truth.append(get_ground_truth(user, test))
 
-    print("RMSE: " + str(rmse(users_ground_truth, users_ranked_dicts)))
-    print("MPR: " + str(mpr(users_ground_truth, users_ranked_dicts)))
+    def calculate_ranks(self, mfmodel, test):
+        predicted = mfmodel.calc_matrix()
+        for user in range(mfmodel.num_users / 20):
+            self.users_ranked_dicts.append(ranked_dict_for_user(user, predicted))
+            self.users_ground_truth.append(get_ground_truth(user, test))
 
-    k = 10
-    print("Average P@k: " + str(patk(users_ground_truth, users_ranked_dicts, k)))
-    print("Average R@k: " + str(ratk(users_ground_truth, users_ranked_dicts, k)))
+        print("RMSE: " + str(rmse(self.users_ground_truth, self.users_ranked_dicts)))
+        print("MPR: " + str(mpr(self.users_ground_truth, self.users_ranked_dicts)))
+
+        k = 10
+        print("Average P@k: " + str(patk(self.users_ground_truth, self.users_ranked_dicts, k)))
+        print("Average R@k: " + str(ratk(self.users_ground_truth, self.users_ranked_dicts, k)))
 
 
 def get_ground_truth(n, data):
@@ -74,10 +75,10 @@ def mpr(users_ground_truth, users_ranked_dicts):
         recomendation_index = 0
         for movie, _ in ground_truth:
             recomendation_index += get_movie_recomendation_index(users_ranked_dicts, user, movie)
-        avg_recomendation_index = (1.*recomendation_index) / (1.*len(ground_truth))
+        avg_recomendation_index = (1. * recomendation_index) / (1. * len(ground_truth))
         num_of_ratings += len(ground_truth)
-        sum_user_mpr += (1.*avg_recomendation_index) / (1.*len(users_ranked_dicts[0]))
-    return (1.*sum_user_mpr) / (1.*num_of_ratings)
+        sum_user_mpr += (1. * avg_recomendation_index) / (1. * len(users_ranked_dicts[0]))
+    return (1. * sum_user_mpr) / (1. * num_of_ratings)
 
 
 def patk(users_ground_truth, users_ranked_dicts, k):
