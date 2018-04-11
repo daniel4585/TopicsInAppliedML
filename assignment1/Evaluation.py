@@ -13,12 +13,13 @@ class Evaluation(object):
             self.users_ranked_dicts.append(ranked_dict_for_user(user, predicted))
             self.users_ground_truth.append(get_ground_truth(user, test))
 
-        print("RMSE: " + str(rmse(self.users_ground_truth, self.users_ranked_dicts)))
-        print("MPR: " + str(mpr(self.users_ground_truth, self.users_ranked_dicts)))
+        #print("RMSE: " + str(rmse(self.users_ground_truth, self.users_ranked_dicts)))
+        #print("MPR: " + str(mpr(self.users_ground_truth, self.users_ranked_dicts)))
 
-        k = 10
-        print("Average P@k: " + str(patk(self.users_ground_truth, self.users_ranked_dicts, k)))
-        print("Average R@k: " + str(ratk(self.users_ground_truth, self.users_ranked_dicts, k)))
+        k = 20
+        #print("Average P@k: " + str(patk(self.users_ground_truth, self.users_ranked_dicts, k)))
+        #print("Average R@k: " + str(ratk(self.users_ground_truth, self.users_ranked_dicts, k)))
+        print("MAP: " + str(mean_average_precision(self.users_ground_truth, self.users_ranked_dicts, k)))
 
 
 def get_ground_truth(n, data):
@@ -85,8 +86,10 @@ def patk(users_ground_truth, users_ranked_dicts, k):
     totalTP = 0
     for user, ranked_dict in enumerate(users_ranked_dicts):
         TP, ground_truth = calculate_tp(k, ranked_dict, user, users_ground_truth)
-        # print("P@k = %f" % ((1. * TP) / (1. * k)))
+        user_patk = (1. * TP) / (1. * k)
+        # print("P@k = %f" % user_patk)
         totalTP += TP
+
 
     return (1. * totalTP) / (1. * k * len(users_ranked_dicts))
 
@@ -96,9 +99,10 @@ def ratk(users_ground_truth, users_ranked_dicts, k):
     totalGroundTruths = 0
     for user, ranked_dict in enumerate(users_ranked_dicts):
         TP, ground_truth = calculate_tp(k, ranked_dict, user, users_ground_truth)
+        user_ratk = (1. * TP) / (1. * len(ground_truth))
+        # print("R@k = %f" % user_ratk))
         totalGroundTruths += len(ground_truth)
         totalTP += TP
-        # print("R@k = %f" % ((1. * TP) / (1. * len(ground_truth))))
 
     return (1. * totalTP) / (1. * totalGroundTruths)
 
@@ -111,5 +115,30 @@ def calculate_tp(k, ranked_dict, user, users_ground_truth):
             if movie == movie_truth:
                 TP += 1
                 break
-
     return TP, ground_truth
+
+
+def mean_average_precision(users_ground_truth, users_ranked_dicts, k):
+    result = 0
+    sum_ground_truths = 0
+    for user, ranked_dict in enumerate(users_ranked_dicts):
+        avg_precision = 0
+
+        for k_iter in range(1, k + 1):
+            # No need to calculate TP of last iteration
+            user_ratk_1 = 0
+            if k_iter != 1:
+                user_ratk_1 = (1. * TP) / (1. * len(ground_truth))
+
+            TP, ground_truth = calculate_tp(k_iter, ranked_dict, user, users_ground_truth)
+            user_ratp = (1. * TP) / (1. * k_iter)
+            user_ratk = (1. * TP) / (1. * len(ground_truth))
+
+            avg_precision += user_ratp * (user_ratk - user_ratk_1)
+
+        #print("Average precision = %f" % avg_precision)
+        result += avg_precision
+        sum_ground_truths += len(ground_truth)
+
+
+    return (1. * result / (1. * sum_ground_truths))

@@ -2,7 +2,7 @@ from MFModel import MFModel
 from GradientDecent import LearnModelFromDataUsingSGD, SGDParameters
 from Lambda import Lambda
 from AlternatingLeastSquares import LearnModelFromDataUsingALS, ALSParameters
-from Evaluation import calculate_ranks, Evaluation
+from Evaluation import Evaluation
 from utils import *
 from Movie import Movie
 from User import User
