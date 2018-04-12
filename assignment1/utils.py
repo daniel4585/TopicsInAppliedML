@@ -51,6 +51,7 @@ def mean_squared_error(mfmodel, predicted, data):
     xs, ys = data.nonzero()
     error = 0
     for x, y in zip(xs, ys):
+        print "\t  " + str(pow(data[x, y] + predicted[x, y], 2) / 2)
         error += pow(data[x, y] - predicted[x, y], 2) / 2
 
     for i in range(mfmodel.num_movies):

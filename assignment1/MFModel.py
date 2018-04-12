@@ -7,6 +7,7 @@ class MFModel(object):
         self.num_users, self.num_movies = R.shape
 
         # Initialize parameters randomly
+        #todo initialize with small variance ~0.01
         self.u = np.random.normal(scale=1. / self.K, size=(self.num_users, self.K))
         self.v = np.random.normal(scale=1. / self.K, size=(self.num_movies, self.K))
 
