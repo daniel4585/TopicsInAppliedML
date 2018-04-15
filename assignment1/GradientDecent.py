@@ -15,8 +15,8 @@ class SGDParameters(object):
 
 def LearnModelFromDataUsingSGD(data, mfmodel, parameters, extra_data_set=None):
     try:
-        os.remove("output/SGD_error_1.txt")
-        os.remove("output/SGD_error_2.txt")
+        os.remove("output/SGD_train_error.txt")
+        os.remove("output/SGD_test_error.txt")
     except OSError:
         pass
 
@@ -25,9 +25,9 @@ def LearnModelFromDataUsingSGD(data, mfmodel, parameters, extra_data_set=None):
         predicted = mfmodel.calc_matrix()
         print("Step: %s, error: %f" % (step, mean_squared_error(mfmodel, predicted, data)))
 
-        write_error_to_file(mfmodel, predicted, data, "SGD_error_1.txt")
+        write_error_to_file(mfmodel, predicted, data, "SGD_train_error.txt")
         if extra_data_set is not None:
-            write_error_to_file(mfmodel, predicted, extra_data_set, "SGD_error_2.txt")
+            write_error_to_file(mfmodel, predicted, extra_data_set, "SGD_test_error.txt")
 
         xs, ys = data.nonzero()
         for x, y in zip(xs, ys):

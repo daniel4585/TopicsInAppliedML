@@ -16,17 +16,17 @@ def LearnModelFromDataUsingALS(data, mfmodel, parameters, extra_data_set=None):
     M, N = data.shape
 
     try:
-        os.remove("output/ALS_error_1.txt")
-        os.remove("output/ALS_error_2.txt")
+        os.remove("output/ALS_train_error.txt")
+        os.remove("output/ALS_test_error.txt")
     except OSError:
         pass
 
     while abs(last_e - e) > parameters.convergence_threshold:
 
         predicted = mfmodel.calc_matrix()
-        write_error_to_file(mfmodel, predicted, data, "ALS_error_1.txt")
+        write_error_to_file(mfmodel, predicted, data, "ALS_train_error.txt")
         if extra_data_set is not None:
-            write_error_to_file(mfmodel, predicted, extra_data_set, "ALS_error_2.txt")
+            write_error_to_file(mfmodel, predicted, extra_data_set, "ALS_test_error.txt")
 
         last_e = e
         e = mean_squared_error(mfmodel, predicted, data)

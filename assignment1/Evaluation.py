@@ -47,7 +47,7 @@ class Evaluation(object):
 
     def calculate_ranks(self, mfmodel, test):
         predicted = mfmodel.calc_matrix()
-        for user in range(mfmodel.num_users / 20):
+        for user in range(mfmodel.num_users):
             self.users_ranked_dicts.append(ranked_dict_for_user(user, predicted))
             self.users_ground_truth.append(get_ground_truth(user, test))
 
@@ -67,7 +67,7 @@ class Evaluation(object):
     def rmse(self):
         error = 0
         num_of_ratings = 0
-        for user in range(len(self.users_ranked_dicts.keys())):
+        for user in range(len(self.users_ranked_dicts)):
             user_error = 0
             num_of_ratings_per_user = len(self.users_ground_truth[user])
             num_of_ratings += num_of_ratings_per_user
@@ -115,19 +115,19 @@ class Evaluation(object):
 
         return (1. * totalTP) / (1. * totalGroundTruths)
 
-    def mean_average_precision(self, k):
+    def mean_average_precision(self):
         result = 0
         sum_ground_truths = 0
         for user, ranked_dict in enumerate(self.users_ranked_dicts):
             avg_precision = 0
-
+            k = len(self.users_ground_truth[user])
             for k_iter in range(1, k + 1):
                 # No need to calculate TP of last iteration
                 user_ratk_1 = 0
                 if k_iter != 1:
                     user_ratk_1 = (1. * TP) / (1. * len(ground_truth))
 
-                TP, ground_truth = calculate_tp(k_iter, ranked_dict, user, uself.sers_ground_truth)
+                TP, ground_truth = calculate_tp(k_iter, ranked_dict, user, self.users_ground_truth)
                 user_ratp = (1. * TP) / (1. * k_iter)
                 user_ratk = (1. * TP) / (1. * len(ground_truth))
 

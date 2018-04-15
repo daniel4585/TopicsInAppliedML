@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import pickle
 
 
 def train_test_split(rating_list):
@@ -51,7 +52,6 @@ def mean_squared_error(mfmodel, predicted, data):
     xs, ys = data.nonzero()
     error = 0
     for x, y in zip(xs, ys):
-        print "\t  " + str(pow(data[x, y] + predicted[x, y], 2) / 2)
         error += pow(data[x, y] - predicted[x, y], 2) / 2
 
     for i in range(mfmodel.num_movies):
@@ -70,3 +70,13 @@ def write_error_to_file(mfmodel, predicted, data, file_output):
     error = mean_squared_error(mfmodel, predicted, data)
     with open("output/" + file_output, 'a') as output:
          output.write("error:" + str(error) + "\n")
+
+
+def pickle_load(path):
+    with open(path, 'rb') as input:
+        return pickle.load(input)
+
+
+def pickle_save(path, value):
+    with open(path, 'wb') as output:
+        pickle.dump(value, output, pickle.HIGHEST_PROTOCOL)
