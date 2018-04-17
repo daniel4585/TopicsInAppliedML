@@ -172,18 +172,20 @@ def main():
                 pickle_save('rmses_k.pkl', rmses)
                 pickle_save('mprs_k.pkl', mprs)
                 pickle_save('times_k.pkl', mprs)
-            else:
-                rmses = pickle_load('rmses_k.pkl')
-                mprs = pickle_load('mprs_k.pkl')
-                times = pickle_load('times_k.pkl')
+        else:
+            rmses = pickle_load('rmses_k.pkl')
+            mprs = pickle_load('mprs_k.pkl')
+            times = pickle_load('times_k.pkl')
         plot_dim(k_values, rmses, mprs, config.items('SGD'))
         plot_dim_times(k_values,times, config.items('SGD'))
 
     e = Evaluation()
     e.calculate_ranks(model, R_test)
-    e.print_user_recommendation_list(21, 3, movies_dict, users_dict)
+    e.print_user_recommendation_list(666, 3, movies_dict, users_dict)
     e.print_user_recommendation_list(23, 3, movies_dict, users_dict)
     e.print_user_recommendation_list(99, 3, movies_dict, users_dict)
+    e.print_user_recommendation_list(121, 3, movies_dict, users_dict)
+    e.print_user_recommendation_list(123, 3, movies_dict, users_dict)
 
 if __name__ == '__main__':
     main()

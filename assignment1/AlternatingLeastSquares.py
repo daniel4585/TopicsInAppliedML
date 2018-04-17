@@ -23,22 +23,13 @@ def LearnModelFromDataUsingALS(data, mfmodel, parameters, extra_data_set=None):
 
     while abs(last_e - e) > parameters.convergence_threshold:
 
-        predicted = mfmodel.calc_matrix()
-        write_error_to_file(mfmodel, predicted, data, "ALS_train_error.txt")
-        if extra_data_set is not None:
-            write_error_to_file(mfmodel, predicted, extra_data_set, "ALS_test_error.txt")
-
-        last_e = e
-        e = mean_squared_error(mfmodel, predicted, data)
-        print("Error: %f" % e)
-
-
         # Precompute variables
         u_with_bias = np.concatenate((mfmodel.u, np.ones((M, 1))), axis=1)
         v_with_bias = np.concatenate((mfmodel.v, np.expand_dims(mfmodel.b_n, axis=1)), axis=1)
 
         YTY = u_with_bias.T.dot(u_with_bias)
         lambdaI = np.eye(YTY.shape[0]) * mfmodel.lamb.lambda_v
+        lambdaI[-1][-1] = lambdaI[-1][-1] * mfmodel.lamb.lambda_b_v / mfmodel.lamb.lambda_v
         r = (data.T - mfmodel.b_m).T - mfmodel.mu
 
         # Update latent variables
@@ -56,6 +47,7 @@ def LearnModelFromDataUsingALS(data, mfmodel, parameters, extra_data_set=None):
 
         XTX = v_with_bias.T.dot(v_with_bias)
         lambdaI = np.eye(XTX.shape[0]) * mfmodel.lamb.lambda_u
+        lambdaI[-1][-1] = lambdaI[-1][-1] * mfmodel.lamb.lambda_b_u / mfmodel.lamb.lambda_u
         r = data - mfmodel.mu - mfmodel.b_n
 
         # Update latent variables
@@ -66,3 +58,11 @@ def LearnModelFromDataUsingALS(data, mfmodel, parameters, extra_data_set=None):
         mfmodel.u = u_with_bias[:, :-1]
         mfmodel.b_m = u_with_bias[:, -1]
 
+        predicted = mfmodel.calc_matrix()
+        write_error_to_file(mfmodel, predicted, data, "ALS_train_error.txt")
+        if extra_data_set is not None:
+            write_error_to_file(mfmodel, predicted, extra_data_set, "ALS_test_error.txt")
+
+        last_e = e
+        e = mean_squared_error(mfmodel, predicted, data)
+        print("Error: %f" % e)

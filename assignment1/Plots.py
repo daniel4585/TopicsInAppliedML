@@ -51,14 +51,14 @@ def plot_lambda(lambdas, rmses, mprs, sgd_params):
 def plot_dim(Ks, rmses, mprs, sgd_params):
     plt.subplot(121)
     plt.plot(Ks, rmses)
-    plt.xlabel('# of Latent Dim ')
+    plt.xlabel('# of Latent Dimentions ')
     plt.ylabel("RMSE")
-    title = "#of Latent dim train - SGD Params:" + str(sgd_params)
+    title = "#of Latent Dimentions train - SGD Params:" + str(sgd_params)
     plt.suptitle(title, fontsize=16)
 
     plt.subplot(122)
     plt.plot(Ks, mprs)
-    plt.xlabel('# of Latent Dim')
+    plt.xlabel('# of Latent Dimentions')
     plt.ylabel("MPR")
     plt.show()
 

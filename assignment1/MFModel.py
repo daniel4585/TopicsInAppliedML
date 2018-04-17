@@ -21,5 +21,8 @@ class MFModel(object):
 
 
     def calc_matrix(self):
-        return (self.mu + self.b_n[:, np.newaxis] + self.b_m[np.newaxis, :]).T + self.u.dot(self.v.T)
+        return (self.mu +
+                    np.repeat(np.reshape(self.b_n, (self.num_movies, 1)), self.num_users, axis=1).T +
+                        np.repeat(np.reshape(self.b_m, (self.num_users, 1)), self.num_movies, axis=1)) + self.u.dot(self.v.T)
+
 
