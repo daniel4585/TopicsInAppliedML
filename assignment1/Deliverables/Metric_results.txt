@@ -1,0 +1,11 @@
+Hyperparameters: [('lambda_u', '0.01'), ('lambda_v', '0.01'), ('lambda_b_u', '0.01'), ('lambda_b_v', '0.01')]
+Chosen model: ALS
+Metrics:
+	RMSE: 0.555072822323
+	MPR: 0.00316748141198
+	Average P@2: 0.100496688742
+	Average P@10: 0.112284768212
+	Average R@2: 0.00599651273642
+	Average R@10: 0.0334994640678
+	MAP: 0.000978586075614
+Time: 83.0399999619 s
