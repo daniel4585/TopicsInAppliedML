@@ -14,6 +14,8 @@ class SGDParameters(object):
 
 
 def LearnModelFromDataUsingSGD(data, mfmodel, parameters, extra_data_set=None):
+    print("Training model using SGD")
+
     try:
         os.remove("output/SGD_train_error.txt")
         os.remove("output/SGD_test_error.txt")

@@ -30,6 +30,7 @@ def main():
     start = 0
     end = 0
 
+    # Train model
     if bTrain:
         train, test = train_test_split(ratings)
         R_train = create_data_matrix(train, NUM_USERS, NUM_MOVIES)
@@ -62,6 +63,7 @@ def main():
 
         print "Time: " + str(end - start) + " s"
 
+    # Don't train model - use saved pickle file
     if not bTrain:
         R_train = pickle_load('R_train.pkl')
         R_test = pickle_load('R_test.pkl')
@@ -71,6 +73,7 @@ def main():
         if config.get('Model', 'chosen') == 'ALS':
             model = pickle_load('model_ALS.pkl')
 
+    # Calculate metrics
     if config.getboolean('Debug', 'bMetrics'):
         e = Evaluation()
         e.calculate_ranks(model, R_test)
@@ -114,13 +117,14 @@ def main():
             output.write("Time: " + str(end - start) + " s" + "\n")
         plot_error(config.items('HyperParams'), config.items('SGD'))
 
+    # Train models with different lambdas
     if config.getboolean('Debug', 'bLambda'):
         lamb_values = [0.1, 1, 10, 100]
         rmses = []
         mprs = []
         if config.getboolean('Debug', 'bLambdaTrain'):
             for value in lamb_values:
-                print ("Lamb value: " + str(value))
+                print ("Training model with Lambda=" + str(value))
                 lamb = Lambda(value, value, value, value)
                 model = MFModel(R_train, K=config.getint('Model', 'K'), lamb=lamb)
                 LearnModelFromDataUsingSGD(R_train, model, SGDParameters(steps=config.getint('SGD', 'steps'),
@@ -142,14 +146,16 @@ def main():
             mprs = pickle_load('mprs_lamb.pkl')
         plot_lambda(lamb_values, rmses, mprs, config.items('SGD'))
 
+    # Train models with different Ks
     if config.getboolean('Debug', 'bK'):
         k_values = [2, 4, 10, 20, 40, 50, 70, 100, 200]
+
         rmses = []
         mprs = []
         times = []
         if config.getboolean('Debug', 'bKTrain'):
             for value in k_values:
-                print ("K value: " + str(value))
+                print ("Training model with K=" + str(value))
                 lamb = Lambda(0.1, 0.1, 0.1, 0.1)
                 model = MFModel(R_train, K=value, lamb=lamb)
                 start = time.time()
@@ -176,16 +182,17 @@ def main():
             rmses = pickle_load('rmses_k.pkl')
             mprs = pickle_load('mprs_k.pkl')
             times = pickle_load('times_k.pkl')
+
         plot_dim(k_values, rmses, mprs, config.items('SGD'))
         plot_dim_times(k_values,times, config.items('SGD'))
 
+    # Summarize, print chosen users' recommendations
     e = Evaluation()
     e.calculate_ranks(model, R_test)
-    e.print_user_recommendation_list(666, 3, movies_dict, users_dict)
-    e.print_user_recommendation_list(23, 3, movies_dict, users_dict)
-    e.print_user_recommendation_list(99, 3, movies_dict, users_dict)
-    e.print_user_recommendation_list(121, 3, movies_dict, users_dict)
-    e.print_user_recommendation_list(123, 3, movies_dict, users_dict)
+    users = [23, 99, 121, 123, 666]
+    for user in users:
+        e.print_user_recommendation_list(user, 3, movies_dict, users_dict)
+
 
 if __name__ == '__main__':
     main()

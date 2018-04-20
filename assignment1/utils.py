@@ -21,10 +21,10 @@ def train_test_split(rating_list):
     train.extend(user_ratings[:int(len(user_ratings) * 0.8)])
     test.extend(user_ratings[int(len(user_ratings) * 0.8):])
 
-    print "train " + str(len(train))
-    print "test " + str(len(test))
-    print "together " + str(len(train) + len(test))
-    print "rating list " + str(len(rating_list))
+    print "Train size: " + str(len(train))
+    print "Test size: " + str(len(test))
+    #print "together " + str(len(train) + len(test))
+    #print "rating list " + str(len(rating_list))
     return train, test
 
 

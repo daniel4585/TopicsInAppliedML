@@ -11,6 +11,8 @@ class ALSParameters(object):
 
 
 def LearnModelFromDataUsingALS(data, mfmodel, parameters, extra_data_set=None):
+    print("Training model using ALS")
+
     e = float("inf")
     last_e = float("-Inf")
     M, N = data.shape
