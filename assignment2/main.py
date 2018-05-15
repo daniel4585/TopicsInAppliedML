@@ -1,5 +1,10 @@
 from DatasetSplit import DatasetSplit
 from TrainTestSplit import TrainTestSplit
+from ModelParameters import ModelParameters
+from HyperParameters import HyperParameters
+
+
+
 
 def main():
 
@@ -7,7 +12,8 @@ def main():
     print("Train size: " + str(len(ds.train)))
     print("Test size: " + str(len(ds.test)))
     trainTest = TrainTestSplit(ds, "data/datasetSentences.txt")
-
+    modelParameters = ModelParameters(HyperParameters(1, 10, 100, 20, None, 211221,0.75))
+    modelParameters.Init(trainTest.train)
 
 
 if __name__ == '__main__':
