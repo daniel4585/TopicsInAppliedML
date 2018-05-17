@@ -12,15 +12,8 @@ def main():
     print("Train size: " + str(len(ds.train)))
     print("Test size: " + str(len(ds.test)))
     trainTest = TrainTestSplit(ds, "data/datasetSentences.txt")
-    modelParameters = ModelParameters(HyperParameters(1, 10, 100, 20, None, 211221,0.75))
+    modelParameters = ModelParameters(HyperParameters(20000, 50, 5, 50, 10, 100,  None, 211221, 0.3))
     modelParameters.Init(trainTest.train)
-    wt, wc = modelParameters.sample_target_context(trainTest.train)
-    print wt
-    print wc
-    wt, wc = modelParameters.sample_target_context(trainTest.train)
-    print wt
-    print wc
-
 
 
 if __name__ == '__main__':
