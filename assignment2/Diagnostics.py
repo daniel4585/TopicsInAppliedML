@@ -7,6 +7,7 @@ def sigmoid(x):
 def loglikelihood(data, model):
     # Calculate log likelihood
     log_likelihood = 0
+    word_count = 0
     for sentence in data:
         for index, _ in enumerate(sentence):
             t, Wc = model.get_vocabularyIndexAndContext(sentence, index)
@@ -16,8 +17,9 @@ def loglikelihood(data, model):
                 Nk = model.sample_K_words()
                 for nk in Nk:
                     log_likelihood += np.log(1 - sigmoid(model.u[t].T.dot(model.v[nk])))
+        word_count += 1
 
-    return log_likelihood / model.totalNumOfWords
+    return log_likelihood / word_count
 
 
 def minibatch_loglikelihood(minibatch, model):

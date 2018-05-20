@@ -19,7 +19,7 @@ class ModelParameters(object):
         for i, (key, value) in enumerate(self.vocabulary.items()):
             self.vocabulary[key] = 0
 
-        self.vocabulary += Counter(sum(train, []))
+        self.vocabulary.update(Counter(sum(train, [])))
         for i, (key, value) in enumerate(self.vocabulary.items()):
             self.vocabulary[key] = (value, i)
 
