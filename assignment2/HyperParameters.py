@@ -1,5 +1,5 @@
 class HyperParameters(object):
-    def __init__(self, iterations, minibatchsize, C, D, K, annealingRate, eta, noiseDist, seed, alpha):
+    def __init__(self, iterations, minibatchsize, C, D, K, annealingRate, eta, noiseDist, seed, alpha, X):
         self.minibatchsize = minibatchsize
         self.iterations = iterations
         self.C = C
@@ -10,5 +10,6 @@ class HyperParameters(object):
         self.noiseDist = noiseDist
         self.seed = seed
         self.alpha = alpha
+        self.X = X
 
 

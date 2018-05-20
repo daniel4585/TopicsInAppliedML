@@ -10,11 +10,11 @@ def main():
     print("Train size: " + str(len(ds.train)))
     print("Test size: " + str(len(ds.test)))
     trainTest = TrainTestSplit(ds, "data/datasetSentences.txt")
-    modelParameters = ModelParameters(HyperParameters(20000, 50, 5, 50, 10, 10000, 0.3, None, 211221, 1.0))
+    modelParameters = ModelParameters(HyperParameters(20000, 50, 5, 50, 10, 10000, 0.3, None, 211221, 1.0, 100))
     modelParameters.Init(trainTest.train)
 
     sgd = SGD()
-    sgd.LearnParamsUsingSGD(trainTest.train, modelParameters)
+    sgd.LearnParamsUsingSGD(trainTest.train, trainTest.test, modelParameters)
 
 
 if __name__ == '__main__':

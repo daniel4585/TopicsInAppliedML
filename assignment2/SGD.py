@@ -1,14 +1,21 @@
 import numpy as np
+from Diagnostics import minibatch_loglikelihood, loglikelihood, sigmoid
+import os
 
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
 
 class SGD(object):
 
-    def LearnParamsUsingSGD(self, train, model):
+    def LearnParamsUsingSGD(self, train, test, model):
 
         toAnneal = model.hyperParams.annealingRate
         eta = model.hyperParams.eta
+
+        output_file = "output/loglikelihood.txt"
+        try:
+            os.remove(output_file)
+        except OSError:
+            pass
+
         for iter in range(model.hyperParams.iterations):
             u = model.u
             v = model.v
@@ -39,7 +46,6 @@ class SGD(object):
                         gT[t] = gT[t] - sig * v[nk]
                         gC[nk] = gC[nk] - sig * u[t]
 
-
                     minibatch[-1][2].append(Nk)
 
             # Update model matrices
@@ -54,17 +60,18 @@ class SGD(object):
                 eta = eta / 2.0
 
             # Calculate log likelihood
-            log_likelihood = 0
-            for sample in minibatch:
-                t = sample[0]
-                for i, c in enumerate(sample[1]):
-                    log_likelihood += np.log(sigmoid(model.u[t].T.dot(model.v[c])))
+            minibatch_log_likelihood = minibatch_loglikelihood(minibatch, model)
+            print("Iteration: " + str(iter) + " Log likelihood: " + str(minibatch_log_likelihood))
 
-                    for nk in sample[2][i]:
-                        log_likelihood += np.log(1 - sigmoid(model.u[t].T.dot(model.v[nk])))
+            # Print loglikelihood to file
+            if iter % model.hyperParams.X == 0:
+                with open(output_file, "a") as output:
+                    output.write("Iteration: " + str(iter) + "\n")
+                    output.write("Minibatch loglikelihood: " + str(minibatch_log_likelihood))
+                    output.write("Loglikelihood: " + str(loglikelihood(test, model)))
 
-            log_likelihood = log_likelihood / model.hyperParams.minibatchsize
-            print("Iteration: " + str(iter) + " Log likelihood: " + str(log_likelihood))
+
+
 
 
 

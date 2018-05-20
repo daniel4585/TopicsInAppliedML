@@ -51,4 +51,4 @@ class ModelParameters(object):
                   [self.vocabulary[chosenSentence[i]][1] for i in
                    range(wordIndex + 1, min(wordIndex + 1 + self.hyperParams.C, len(chosenSentence)))]
         selectedWordVocabularyIndex = self.vocabulary[chosenSentence[wordIndex]][1]
-        return selectedWordVocabularyIndex , context
+        return selectedWordVocabularyIndex, context
