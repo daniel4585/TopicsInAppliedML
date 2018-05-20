@@ -70,7 +70,7 @@ class SGD(object):
                 with open(output_file, "a") as output:
                     output.write("Iteration: " + str(iter) + "\n")
                     output.write("Minibatch loglikelihood: " + str(minibatch_log_likelihood))
-                    output.write("Loglikelihood: " + str(loglikelihood(test, model)))
+                    #output.write("Loglikelihood: " + str(loglikelihood(test, model)))
 
 
 

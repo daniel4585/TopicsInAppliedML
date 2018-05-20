@@ -22,7 +22,7 @@ def main():
     print("Train size: " + str(len(ds.train)))
     print("Test size: " + str(len(ds.test)))
     trainTest = TrainTestSplit(ds, "data/datasetSentences.txt")
-    modelParameters = ModelParameters(HyperParameters(20000, 50, 5, 50, 10, 10000, 0.3, None, 211221, 1.0, 100))
+    modelParameters = ModelParameters(HyperParameters(100, 20, 5, 50, 20, 500, 0.3, None, 211221, 1.0, 100))
     modelParameters.Init(trainTest)
 
     if True:
