@@ -5,7 +5,9 @@ import os
 
 class SGD(object):
 
-    def LearnParamsUsingSGD(self, train, test, model):
+    def LearnParamsUsingSGD(self, trainTest, model):
+        train = trainTest.train
+        test = trainTest.test
 
         toAnneal = model.hyperParams.annealingRate
         eta = model.hyperParams.eta

@@ -12,8 +12,14 @@ class ModelParameters(object):
         self.unigramDistVec = []
         self.sentenceDistVec = []
 
-    def Init(self, train):
-        self.vocabulary = Counter(sum(train, []))
+    def Init(self, data):
+        train = data.train
+        test = data.test
+        self.vocabulary = Counter(sum(test, []))
+        for i, (key, value) in enumerate(self.vocabulary.items()):
+            self.vocabulary[key] = 0
+
+        self.vocabulary += Counter(sum(train, []))
         for i, (key, value) in enumerate(self.vocabulary.items()):
             self.vocabulary[key] = (value, i)
 
