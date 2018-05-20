@@ -39,10 +39,13 @@ class ModelParameters(object):
     def sample_target_context(self, train):
         chosenSentence = np.random.choice(train, p=self.sentenceDistVec)
         wordIndex = np.random.choice(range(len(chosenSentence)))
-        context = [self.vocabulary[chosenSentence[i]][1] for i in range(max(0,wordIndex-self.hyperParams.C), wordIndex)] + \
-                  [self.vocabulary[chosenSentence[i]][1] for i in range(wordIndex+1, min(wordIndex + 1 + self.hyperParams.C, len(chosenSentence)))]
-        selectedWordVocabularyIndex = self.vocabulary[chosenSentence[wordIndex]][1]
+        selectedWordVocabularyIndex, context = self.get_vocabularyIndexAndContext(chosenSentence, wordIndex)
         return selectedWordVocabularyIndex, context
 
-
-
+    def get_vocabularyIndexAndContext(self, chosenSentence, wordIndex):
+        context = [self.vocabulary[chosenSentence[i]][1] for i in
+                   range(max(0, wordIndex - self.hyperParams.C), wordIndex)] + \
+                  [self.vocabulary[chosenSentence[i]][1] for i in
+                   range(wordIndex + 1, min(wordIndex + 1 + self.hyperParams.C, len(chosenSentence)))]
+        selectedWordVocabularyIndex = self.vocabulary[chosenSentence[wordIndex]][1]
+        return selectedWordVocabularyIndex , context
