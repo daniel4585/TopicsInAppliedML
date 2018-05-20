@@ -3,11 +3,16 @@ from collections import Counter
 class ModelParameters(object):
     def __init__(self, hyperParams):
         self.hyperParams = hyperParams
-
+        self.vocabulary = {}
+        self.totalNumOfWords = 0
+        self.u = None
+        self.v = None
+        self.unigramDistVec = []
+        self.sentenceDistVec = []
 
     def Init(self, train):
         self.vocabulary = Counter(sum(train, []))
-        for i,(key, value) in enumerate(self.vocabulary.items()):
+        for i, (key, value) in enumerate(self.vocabulary.items()):
             self.vocabulary[key] = (value, i)
         self.totalNumOfWords = 0
         for word in self.vocabulary.values():

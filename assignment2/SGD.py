@@ -1,8 +1,7 @@
 import numpy as np
-import math
 
 def sigmoid(x):
-    return 1 / (1 + math.exp(-x))
+    return 1 / (1 + np.exp(-x))
 
 class SGD(object):
 
@@ -10,7 +9,7 @@ class SGD(object):
 
         toAnneal = model.hyperParams.annealingRate
         eta = model.hyperParams.eta
-        for _ in range(model.hyperParams.iterations):
+        for iter in range(model.hyperParams.iterations):
             u = model.u
             v = model.v
 
@@ -40,27 +39,32 @@ class SGD(object):
                         gT[t] = gT[t] - sig * v[nk]
                         gC[nk] = gC[nk] - sig * u[t]
 
+
                     minibatch[-1][2].append(Nk)
 
+            # Update model matrices
             model.u = u + eta * gT
             model.v = v + eta * gC
             model.normalize()
 
+            # Update learning rate
             toAnneal -= 1
             if toAnneal == 0:
                 toAnneal = model.hyperParams.annealingRate
                 eta = eta / 2.0
 
+            # Calculate log likelihood
             log_likelihood = 0
             for sample in minibatch:
                 t = sample[0]
                 for i, c in enumerate(sample[1]):
-                    log_likelihood += math.log10(sigmoid(model.u[t].T.dot(model.v[c])))
+                    log_likelihood += np.log(sigmoid(model.u[t].T.dot(model.v[c])))
 
                     for nk in sample[2][i]:
-                        log_likelihood -= math.log10(1 - sigmoid(model.u[t].T.dot(model.v[nk])))
+                        log_likelihood += np.log(1 - sigmoid(model.u[t].T.dot(model.v[nk])))
 
-            print("Log likelihood: " + str(log_likelihood))
+            log_likelihood = log_likelihood / model.hyperParams.minibatchsize
+            print("Iteration: " + str(iter) + " Log likelihood: " + str(log_likelihood))
 
 
 
