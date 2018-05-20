@@ -1,5 +1,7 @@
 import numpy as np
 from collections import Counter
+
+
 class ModelParameters(object):
     def __init__(self, hyperParams):
         self.hyperParams = hyperParams
@@ -14,6 +16,7 @@ class ModelParameters(object):
         self.vocabulary = Counter(sum(train, []))
         for i, (key, value) in enumerate(self.vocabulary.items()):
             self.vocabulary[key] = (value, i)
+
         self.totalNumOfWords = 0
         for word in self.vocabulary.values():
             self.totalNumOfWords += float(word[0])
