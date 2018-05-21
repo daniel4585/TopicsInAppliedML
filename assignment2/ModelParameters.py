@@ -34,6 +34,10 @@ class ModelParameters(object):
         self.unigramDistVec = [pow(x[0], self.hyperParams.alpha) / denominator for x in self.vocabulary.values()]
         self.sentenceDistVec = [float(len(x)) / self.totalNumOfWords for x in train]
 
+        self.largest_sentence = 0
+        for s in data.train:
+            self.largest_sentence = max(self.largest_sentence, len(s))
+
     def normalize(self):
         for i in range(len(self.vocabulary)):
             self.u[i] = self.u[i] / np.linalg.norm(self.u[i])
@@ -43,7 +47,14 @@ class ModelParameters(object):
         return np.random.choice(self.vocabulary.keys(), p=self.unigramDistVec)
 
     def sample_K_words(self):
-        return [self.vocabulary[self.sample_word()][1] for _ in range(self.hyperParams.K)]
+         return [self.vocabulary[x][1] for x in np.random.choice(self.vocabulary.keys(), size=self.hyperParams.K, p=self.unigramDistVec)]
+
+    def sample_batch_words(self, batchsize):
+        sampled = np.random.choice(self.vocabulary.keys(), size=(batchsize, self.hyperParams.K), p=self.unigramDistVec)
+        samples = []
+        for i, sample in enumerate(sampled):
+            samples.append([self.vocabulary[x][1] for x in sample])
+        return samples
 
     def sample_target_context(self, train):
         chosenSentence = np.random.choice(train, p=self.sentenceDistVec)

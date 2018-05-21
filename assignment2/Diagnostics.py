@@ -4,6 +4,7 @@ import numpy as np
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
+
 def single_loglikelihood(model, c, t):
 
     log_likelihood = np.log(sigmoid(model.u[t].T.dot(model.v[c])))
@@ -12,16 +13,26 @@ def single_loglikelihood(model, c, t):
         log_likelihood += np.log(1 - sigmoid(model.u[t].T.dot(model.v[nk])))
     return log_likelihood
 
+
 def loglikelihood(data, model):
     # Calculate log likelihood
     log_likelihood = 0
     word_count = 0
+
+    # Get negative samples in a batch to optimize runtime
+    batch_Nk = model.sample_batch_words(len(data) * model.largest_sentence * model.hyperParams.C * 2)
+    batch_index = 0
+
     for sentence in data:
         for index, _ in enumerate(sentence):
             t, Wc = model.get_vocabularyIndexAndContext(sentence, index)
             for c in Wc:
-                log_likelihood += single_loglikelihood( model, c, t)
-                
+                log_likelihood += np.log(sigmoid(model.u[t].T.dot(model.v[c])))
+                Nk = batch_Nk[batch_index]
+                batch_index += 1
+                for nk in Nk:
+                    log_likelihood += np.log(1 - sigmoid(model.u[t].T.dot(model.v[nk])))
+
         word_count += 1
 
     return log_likelihood / word_count
