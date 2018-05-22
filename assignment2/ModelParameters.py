@@ -56,11 +56,21 @@ class ModelParameters(object):
             samples.append([self.vocabulary[x][1] for x in sample])
         return samples
 
-    def sample_target_context(self, train):
+
+
+    def sample_target_context(self, train ):
         chosenSentence = np.random.choice(train, p=self.sentenceDistVec)
         wordIndex = np.random.choice(range(len(chosenSentence)))
         selectedWordVocabularyIndex, context = self.get_vocabularyIndexAndContext(chosenSentence, wordIndex)
         return selectedWordVocabularyIndex, context
+
+    def sample_multi_target_context(self, train, numOfTargets):
+        chosenSentences = np.random.choice(train, p=self.sentenceDistVec, size=(numOfTargets, 1))
+        ret = []
+        for i, sentence in enumerate(chosenSentences):
+            selectedWordVocabularyIndex, context = self.get_vocabularyIndexAndContext(sentence[0], np.random.choice(range(len(sentence))))
+            ret.append((selectedWordVocabularyIndex, context))
+        return ret
 
     def get_vocabularyIndexAndContext(self, chosenSentence, wordIndex):
         context = [self.vocabulary[chosenSentence[i]][1] for i in

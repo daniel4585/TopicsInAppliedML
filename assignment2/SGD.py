@@ -14,7 +14,7 @@ class SGD(object):
         toAnneal = model.hyperParams.annealingRate
         eta = model.hyperParams.eta
 
-        output_file = "output/loglikelihood.txt"
+        output_file = "output/loglikelihood1.txt"
         try:
             os.remove(output_file)
         except OSError:
@@ -23,6 +23,7 @@ class SGD(object):
         # Get negative samples in a batch to optimize runtime
         batch_Nk = model.sample_batch_words(model.hyperParams.iterations * model.hyperParams.minibatchsize * model.hyperParams.C * 2)
         batch_index = 0
+        testLogLikelihood = 0
 
         for iter in range(model.hyperParams.iterations):
 
@@ -35,6 +36,7 @@ class SGD(object):
 
             # Save mini-batch for calculating log-likelihood
             minibatch = []
+
 
             #start = time.time()
             for _ in range(model.hyperParams.minibatchsize):
@@ -93,18 +95,19 @@ class SGD(object):
                 toAnneal = model.hyperParams.annealingRate
                 eta = eta / 2.0
 
-            # Calculate log likelihood
-            minibatch_log_likelihood = minibatch_loglikelihood(minibatch, model)
-            #print("Iteration: " + str(iter) + " Log likelihood: " + str(minibatch_log_likelihood))
-
             # Print loglikelihood to file
             if iter % model.hyperParams.X == 0:
+                # Calculate log likelihood
+                minibatch_log_likelihood = minibatch_loglikelihood(minibatch, model)
+                testLogLikelihood = loglikelihood(test, model)
+                print("Iteration: " + str(iter) + " Log likelihood: " + str(minibatch_log_likelihood))
                 with open(output_file, "a") as output:
                     output.write("Iteration: " + str(iter) + "\n")
                     output.write("Minibatch loglikelihood: " + str(minibatch_log_likelihood) + "\n")
-                    output.write("Loglikelihood: " + str(loglikelihood(test, model)) + "\n")
+                    output.write("Loglikelihood: " + str(testLogLikelihood) + "\n")
 
-
+        # return the last computed test log likelihood
+        return testLogLikelihood
 
 
 

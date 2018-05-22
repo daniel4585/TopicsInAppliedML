@@ -6,8 +6,10 @@ def sigmoid(x):
 
 
 def single_loglikelihood(model, c, t):
-
-    log_likelihood = np.log(sigmoid(model.u[t].T.dot(model.v[c])))
+    if c is not -1:
+        log_likelihood = np.log(sigmoid(model.u[t].T.dot(model.v[c])))
+    else:
+        loglikelihood = 0
     Nk = model.sample_K_words()
     for nk in Nk:
         log_likelihood += np.log(1 - sigmoid(model.u[t].T.dot(model.v[nk])))
@@ -32,8 +34,7 @@ def loglikelihood(data, model):
                 batch_index += 1
                 for nk in Nk:
                     log_likelihood += np.log(1 - sigmoid(model.u[t].T.dot(model.v[nk])))
-
-        word_count += 1
+                word_count += 1
 
     return log_likelihood / word_count
 
@@ -41,6 +42,7 @@ def loglikelihood(data, model):
 def minibatch_loglikelihood(minibatch, model):
     # Calculate log likelihood
     log_likelihood = 0
+    word_count = 0
     for sample in minibatch:
         t = sample[0]
         for i, c in enumerate(sample[1]):
@@ -48,5 +50,6 @@ def minibatch_loglikelihood(minibatch, model):
 
             for nk in sample[2][i]:
                 log_likelihood += np.log(1 - sigmoid(model.u[t].T.dot(model.v[nk])))
+            word_count += 1
 
-    return log_likelihood / model.hyperParams.minibatchsize
+    return log_likelihood / word_count

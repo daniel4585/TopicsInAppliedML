@@ -15,7 +15,7 @@ def PredictContext(model, wt):
         else:
             heapq.heappushpop(min_heap, (contextLikelihood, key))
 
-    return min_heap
+    return sorted(min_heap, reverse=True)
 
 
 def PredictInput(model, wcList):
@@ -24,24 +24,36 @@ def PredictInput(model, wcList):
         t = value[1]
         contextLikelihood = 0
         for wc in wcList:
-            c = model.vocabulary[wc][1]
+            vocabVal = model.vocabulary[wc]
+            if vocabVal is 0:
+               c = 0
+            else:
+                c = vocabVal[1]
             contextLikelihood += single_loglikelihood(model, c, t)
         if len(min_heap) < 10:
             heapq.heappush(min_heap, (contextLikelihood, key))
         else:
             heapq.heappushpop(min_heap, (contextLikelihood, key))
 
-    return min_heap
+    return sorted(min_heap, reverse=True)
 
 
 def ScatterMatrix(model, words):
-    indices = model.vocabulary[words][1]
-    x, y = model.u[indices][0:2]
+    indices = [model.vocabulary[word][1] for word in words]
+    vecs_u = model.u[indices]
+    x_u = vecs_u[:, 0]
+    y_u = vecs_u[:, 1]
+    vecs_v = model.v[indices]
+    x_v = vecs_v[:, 0]
+    y_v = vecs_v[:, 1]
     fig, ax = plt.subplots()
-    ax.scatter(x, y)
-
+    ax.scatter(x_u, y_u, color='r', label="U")
+    ax.scatter(x_v, y_v, color='b', label="V")
+    ax.legend()
     for i, txt in enumerate(words):
-        ax.annotate(txt, (x[i], y[i]))
+        ax.annotate(txt, (x_u[i], y_u[i]))
+        ax.annotate(txt, (x_v[i], y_v[i]))
+    plt.suptitle("Model HyperParams:" + str(model.hyperParams))
     plt.show()
 
 
@@ -59,6 +71,6 @@ def AnalogySolver(model, w1, w2, w3):
             heapq.heappush(min_heap, (val, key))
         else:
             heapq.heappushpop(min_heap, (val, key))
-
+    return sorted(min_heap, reverse=True)
 
 
