@@ -11,6 +11,7 @@ class ModelParameters(object):
         self.v = None
         self.unigramDistVec = []
         self.sentenceDistVec = []
+        np.random.seed(hyperParams.seed)
 
     def Init(self, data):
         train = data.train

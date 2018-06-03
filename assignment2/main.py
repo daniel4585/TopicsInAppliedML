@@ -29,10 +29,10 @@ def main():
     config.read("conf.ini")
 
     modelParameters = ModelParameters(HyperParameters(config.getint('HyperParams', 'iterations'), config.getint('HyperParams', 'minibatchsize'),
-                                                      config.getint('HyperParams', 'C'), config.getint('HyperParams', 'D'),
-                                                      config.getint('HyperParams', 'K'), config.getint('HyperParams', 'annealingRate'), config.getfloat('HyperParams', 'eta'),
-                                                      config.getint('HyperParams', 'seed'), config.getfloat('HyperParams', 'alpha'),config.getint('HyperParams', 'X')))
-    modelParameters.Init(trainTest)
+                                                       config.getint('HyperParams', 'C'), config.getint('HyperParams', 'D'),
+                                                       config.getint('HyperParams', 'K'), config.getint('HyperParams', 'annealingRate'), config.getfloat('HyperParams', 'eta'),
+                                                       config.getint('HyperParams', 'seed'), config.getfloat('HyperParams', 'alpha'),config.getint('HyperParams', 'X')))
+    # modelParameters.Init(trainTest)
 
     if config.getboolean('Debug', 'bTrain'):
         start = time.time()
@@ -47,34 +47,44 @@ def main():
             output.write("Final Test Logliklihood: " + str(finalTestLogLiklihood))
 
     else:
-        modelParameters = pickle_load('model.pkl')
+       #modelParameters = pickle_load('model.pkl')
+        modelParameters = pickle_load('eta_2.0_model.pkl')
 
-    plot_logLiklihood(modelParameters.hyperParams)
+
+    #plot_logLiklihood(modelParameters.hyperParams)
 
     if config.getboolean('Debug', 'bVariantD'):
         total_time = []
         finalTestLogLiklihood = []
         finalTrainLogLiklihood = []
-        d_vals = np.linspace()
-        for d in d_vals:
-            start = time.time()
-            modelParameters = ModelParameters(HyperParameters(config.getint('HyperParams', 'iterations'),
-                                                              config.getint('HyperParams', 'minibatchsize'),
-                                                              config.getint('HyperParams', 'C'),
-                                                              d,
-                                                              config.getint('HyperParams', 'K'),
-                                                              config.getint('HyperParams', 'annealingRate'),
-                                                              config.getfloat('HyperParams', 'eta'),
-                                                              config.getint('HyperParams', 'seed'),
-                                                              config.getfloat('HyperParams', 'alpha'),
-                                                              config.getint('HyperParams', 'X')))
-            modelParameters.Init(trainTest)
-            finalTestLogLiklihood.append(sgd.LearnParamsUsingSGD(trainTest, modelParameters))
-            finalTrainLogLiklihood.append(loglikelihood(trainTest.train, modelParameters))
-            total_time.append(time.time() - start)
-        pickle_save("d_finalTrainLogLiklihood.pkl", finalTrainLogLiklihood)
-        pickle_save("d_finalTestLogLiklihood.pkl", finalTestLogLiklihood)
-        pickle_save("d_total_time.pkl", total_time)
+        d_vals = np.linspace(10.0, 300.0, 5, dtype=int)
+        # for d in d_vals:
+        #     start = time.time()
+        #     modelParameters = ModelParameters(HyperParameters(config.getint('HyperParams', 'iterations'),
+        #                                                       config.getint('HyperParams', 'minibatchsize'),
+        #                                                       config.getint('HyperParams', 'C'),
+        #                                                       d,
+        #                                                       config.getint('HyperParams', 'K'),
+        #                                                       config.getint('HyperParams', 'annealingRate'),
+        #                                                       config.getfloat('HyperParams', 'eta'),
+        #                                                       config.getint('HyperParams', 'seed'),
+        #                                                       config.getfloat('HyperParams', 'alpha'),
+        #                                                       config.getint('HyperParams', 'X')))
+        #     modelParameters.Init(trainTest)
+        #     sgd = SGD()
+        #     finalTestLogLiklihood.append(sgd.LearnParamsUsingSGD(trainTest, modelParameters))
+        #     finalTrainLogLiklihood.append(loglikelihood(trainTest.train, modelParameters))
+        #     total_time.append(time.time() - start)
+        #     pickle_save(str(d) + "_finalTrainLogLiklihood.pkl", finalTrainLogLiklihood)
+        #     pickle_save(str(d) + "_finalTestLogLiklihood.pkl", finalTestLogLiklihood)
+        #     pickle_save(str(d) + "_d_total_time.pkl", total_time)
+
+        #pickle_save("d_finalTrainLogLiklihood.pkl", finalTrainLogLiklihood)
+        #pickle_save("d_finalTestLogLiklihood.pkl", finalTestLogLiklihood)
+        #pickle_save("d_total_time.pkl", total_time)
+        finalTrainLogLiklihood = pickle_load("d_finalTrainLogLiklihood.pkl")
+        finalTestLogLiklihood = pickle_load("d_finalTestLogLiklihood.pkl")
+        total_time = pickle_load("d_total_time.pkl")
         plot_varientParam(modelParameters.hyperParams, d_vals, finalTrainLogLiklihood, finalTestLogLiklihood, total_time, "size of the word embedding-D. ", 'size of the word embedding - D')
 
 
@@ -82,27 +92,33 @@ def main():
         total_time = []
         finalTestLogLiklihood = []
         finalTrainLogLiklihood = []
+        sgd = SGD()
         eta_vals = np.linspace(0.1, 2, 5)
-        for eta in eta_vals:
-            start = time.time()
-            modelParameters = ModelParameters(HyperParameters(config.getint('HyperParams', 'iterations'),
-                                                              config.getint('HyperParams', 'minibatchsize'),
-                                                              config.getint('HyperParams', 'C'),
-                                                              config.getint('HyperParams', 'D'),
-                                                              config.getint('HyperParams', 'K'),
-                                                              config.getint('HyperParams', 'annealingRate'),
-                                                              eta,
-                                                              config.getint('HyperParams', 'seed'),
-                                                              config.getfloat('HyperParams', 'alpha'),
-                                                              config.getint('HyperParams', 'X')))
-            modelParameters.Init(trainTest)
-            finalTestLogLiklihood.append(sgd.LearnParamsUsingSGD(trainTest, modelParameters))
-            finalTrainLogLiklihood.append(loglikelihood(trainTest.train, modelParameters))
-            total_time.append(time.time() - start)
-        pickle_save("eta_finalTrainLogLiklihood.pkl", finalTrainLogLiklihood)
-        pickle_save("eta_finalTestLogLiklihood.pkl", finalTestLogLiklihood)
-        pickle_save("eta_total_time.pkl", total_time)
-        plot_varientParam(modelParameters.hyperParams, d_vals, finalTrainLogLiklihood, finalTestLogLiklihood, total_time, "eta", "eta")
+        # for eta in eta_vals:
+        #     start = time.time()
+        #     modelParameters = ModelParameters(HyperParameters(config.getint('HyperParams', 'iterations'),
+        #                                                       config.getint('HyperParams', 'minibatchsize'),
+        #                                                       config.getint('HyperParams', 'C'),
+        #                                                       config.getint('HyperParams', 'D'),
+        #                                                       config.getint('HyperParams', 'K'),
+        #                                                       config.getint('HyperParams', 'annealingRate'),
+        #                                                       eta,
+        #                                                       config.getint('HyperParams', 'seed'),
+        #                                                       config.getfloat('HyperParams', 'alpha'),
+        #                                                       config.getint('HyperParams', 'X')))
+        #     modelParameters.Init(trainTest)
+        #     finalTestLogLiklihood.append(sgd.LearnParamsUsingSGD(trainTest, modelParameters))
+        #     finalTrainLogLiklihood.append(loglikelihood(trainTest.train, modelParameters))
+        #     total_time.append(time.time() - start)
+        #     pickle_save("eta_" + str(eta) + "_model.pkl", modelParameters)
+
+        #pickle_save("eta_finalTrainLogLiklihood.pkl", finalTrainLogLiklihood)
+        #pickle_save("eta_finalTestLogLiklihood.pkl", finalTestLogLiklihood)
+        #pickle_save("eta_total_time.pkl", total_time)
+        finalTrainLogLiklihood = pickle_load("eta_finalTrainLogLiklihood.pkl")
+        finalTestLogLiklihood = pickle_load("eta_finalTestLogLiklihood.pkl")
+        total_time = pickle_load("eta_total_time.pkl")
+        plot_varientParam(modelParameters.hyperParams, eta_vals, finalTrainLogLiklihood, finalTestLogLiklihood, total_time, "eta", "eta")
 
     if config.getboolean('Debug', 'bEvaluate'):
         print "Best Context words:"
@@ -121,10 +137,12 @@ def main():
                                                           config.getfloat('HyperParams', 'alpha'),
                                                           config.getint('HyperParams', 'X')))
         modelParameters.Init(trainTest)
+        sgd = SGD()
         sgd.LearnParamsUsingSGD(trainTest, modelParameters)
         ScatterMatrix(modelParameters, ["good", "bad", "lame", "cool", "exciting"])
 
-        modelParameters = pickle_load('model.pkl')
+        #modelParameters = pickle_load('model.pkl')
+        modelParameters = pickle_load('eta_2.0_model.pkl')
 
         print"model hyperparams:" + str(modelParameters.hyperParams)
         print "Predict input for - The movie was surprisingly __:"
