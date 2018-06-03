@@ -52,7 +52,7 @@ class SGD(object):
                     Nk = batch_Nk[batch_index]
                     batch_index += 1
                     for nk in Nk:
-                        sig = sigmoid(model.v[nk].T.dot(model.u[t]))
+                        sig = (1.0 / len(Nk)) * sigmoid(model.v[nk].T.dot(model.u[t]))
                         gT[t] = gT[t] - sig * model.v[nk]
                         gC[nk] = gC[nk] - sig * model.u[t]
 
