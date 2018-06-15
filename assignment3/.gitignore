@@ -1,0 +1,6 @@
+*.DS_Store*
+*.pyc
+*.pkl
+output/*
+data/*
+.ipynb_checkpoints/
