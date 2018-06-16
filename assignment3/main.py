@@ -8,7 +8,6 @@ from CART import CART
 
 def main():
     df = pd.read_csv("data/train.csv")
-    print(pd.DataFrame.info(df))
 
     df = df.drop("Id", axis=1)
     df = df[np.isfinite(df["SalePrice"])]
@@ -17,6 +16,8 @@ def main():
 
     td = TrainData(train)
     vd = ValidationData(validation, td.cat_mapping, td.cat_mapping_avg, td.numerical_mapping)
+
+    print(pd.DataFrame.info(td.df))
 
     regressionTree = CART(td, maxDepth=2, minNodeSize=20)
     print(regressionTree.GetRoot().printSubTree(0))
