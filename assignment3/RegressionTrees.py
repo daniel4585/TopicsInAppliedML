@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import math
+from Queue import Queue
+from copy import deepcopy as deepcopy
+import sys
+
 
 class RegressionTreeNode(object):
     def __init__(self, j=None, s=None, leftDescendant=None, rightDescendant=None, const=None):
@@ -68,14 +72,8 @@ class RegressionTreeEnsemble(object):
     def SetInitialConstant(self, c):
         self.c = c
 
-    # TODO needs to be implemented
-    def Evaluate(self, x, m):
-        evaluation = 0
-
-        return evaluation
-
-
-
-
-
-
+    def Evaluate(self, x, m=np.inf):
+        res = 0
+        for i in range(min(m, self.M)):
+            res += self.trees[i].Evaluate(x) * self.weights[i]
+        return res
