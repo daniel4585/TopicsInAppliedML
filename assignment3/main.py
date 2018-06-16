@@ -4,6 +4,7 @@ import pandas as pd
 from TrainData import TrainData
 from ValidationData import ValidationData
 from CART import CART
+from GBRT import GBRT
 
 
 def main():
@@ -18,8 +19,12 @@ def main():
     vd = ValidationData(validation, td.cat_mapping, td.cat_mapping_avg, td.numerical_mapping)
 
     print(pd.DataFrame.info(td.df))
-    regressionTree = CART(td, maxDepth=10, minNodeSize=4)
-    print(regressionTree.GetRoot().printSubTree(0))
+    #regressionTree = CART(td.df, maxDepth=10, minNodeSize=4)
+    #print(regressionTree.GetRoot().printSubTree(0))
+
+    ensemble = GBRT(td.df, vd.df, 3, 3, minNodeSize=4)
+    for tree in ensemble.trees:
+        print(tree.GetRoot().printSubTree(0))
 
 
 
