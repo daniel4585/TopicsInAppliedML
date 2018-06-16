@@ -9,7 +9,7 @@ def calculateLoss(data, ensemble):
     return data.apply(lambda x: (x["SalePrice"] - ensemble.Evaluate(x)) ** 2, axis=1).sum() / data.shape[0]
 
 
-def GBRT(data, test, M, J, minNodeSize, Nu=1.0, Eta=1.0):
+def GBRT(data, test, M, J, minNodeSize, Nu=1.0, Eta=1.0, numThresholds=np.inf):
     ensemble = RegressionTreeEnsemble(M=M)
     maxDepth = int(log(J, 2))
 
@@ -24,11 +24,12 @@ def GBRT(data, test, M, J, minNodeSize, Nu=1.0, Eta=1.0):
 
         # Subsampling
         subsampled = copiedData.sample(frac=Eta)
-        regressionTree = CART(subsampled, maxDepth, minNodeSize)
+        regressionTree = CART(subsampled, maxDepth, minNodeSize, numThresholds)
 
         # Calculate weight
         phi = copiedData.apply(lambda x: regressionTree.Evaluate(x), axis=1)
-        bm = (1.0 * gim * phi).sum() / (phi ** 2).sum()
+        bm = (gim * phi).sum() / (phi ** 2).sum()
+        print(bm)
         ensemble.AddTree(regressionTree, bm)
 
         # Update fm

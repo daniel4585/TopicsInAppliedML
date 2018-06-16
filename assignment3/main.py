@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from TrainData import TrainData
 from ValidationData import ValidationData
-from CART import CART
+from CART import CART, calculateLoss
 from GBRT import GBRT
 
 
@@ -19,10 +19,9 @@ def main():
     vd = ValidationData(validation, td.cat_mapping, td.cat_mapping_avg, td.numerical_mapping)
 
     #print(pd.DataFrame.info(td.df))
-    #regressionTree = CART(td.df, maxDepth=10, minNodeSize=4)
-    #regressionTree.GetRoot().printSubTree()
+    #regressionTree = CART(td.df, maxDepth=3, minNodeSize=4, numThresholds=10)
 
-    ensemble = GBRT(td.df, vd.df, M=6, J=4, minNodeSize=20, Nu=1.0, Eta=1.0)
+    ensemble = GBRT(td.df, vd.df, M=6, J=4, minNodeSize=20, Nu=1.0, Eta=1.0, numThresholds=10)
     for tree in ensemble.trees:
         tree.GetRoot().printSubTree()
 
