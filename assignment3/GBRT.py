@@ -1,5 +1,5 @@
 from Queue import Queue
-from RegressionTrees import RegressionTree, RegressionTreeEnsemble
+from RegressionTrees import RegressionTree, RegressionTreeEnsemble, RegressionTreeNode
 import numpy as np
 from CART import CART
 from math import log
@@ -11,6 +11,9 @@ def calculateLoss(data, ensemble):
 
 def GBRT(data, test, M, J, minNodeSize, Nu=1.0, Eta=1.0, numThresholds=np.inf):
     ensemble = RegressionTreeEnsemble(M=M)
+    # Add initial tree with mean value
+    ensemble.AddTree(CART(data, 0, 0, 0), 1.0)
+
     maxDepth = int(log(J, 2))
 
     copiedData = data.copy()
@@ -28,8 +31,7 @@ def GBRT(data, test, M, J, minNodeSize, Nu=1.0, Eta=1.0, numThresholds=np.inf):
 
         # Calculate weight
         phi = copiedData.apply(lambda x: regressionTree.Evaluate(x), axis=1)
-        bm = (gim * phi).sum() / (phi ** 2).sum()
-        print(bm)
+        bm = (np.multiply(gim, phi)).sum() / (np.power(phi, 2)).sum()
         ensemble.AddTree(regressionTree, bm)
 
         # Update fm
