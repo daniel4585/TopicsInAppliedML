@@ -18,8 +18,7 @@ def main():
     vd = ValidationData(validation, td.cat_mapping, td.cat_mapping_avg, td.numerical_mapping)
 
     print(pd.DataFrame.info(td.df))
-
-    regressionTree = CART(td, maxDepth=2, minNodeSize=20)
+    regressionTree = CART(td, maxDepth=10, minNodeSize=4)
     print(regressionTree.GetRoot().printSubTree(0))
 
 

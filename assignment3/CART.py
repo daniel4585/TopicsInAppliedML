@@ -31,21 +31,27 @@ def GetOptimalPartition(p):
 
 
 def CART(data, maxDepth, minNodeSize):
+    if maxDepth == 0:
+        print "Max depth must be greater than 1"
+        return None
+
     q = Queue()
     root = RegressionTreeNode()
-    q.put((root, data.df, np.inf))
-    for k in range(maxDepth):
-        print "Step" + str(k)
-        if q.qsize() == 0:
-            break
-        node, p, c = q.get()
+    q.put((root, data.df, np.inf, 0))
+    while q.qsize() != 0:
+        node, p, c, level = q.get()
+        print "Level " + str(level)
+        if level == maxDepth:
+            node.MakeTerminal(c)
+            continue
+
         j, s, cl, cr = GetOptimalPartition(p)
         pl = data.df.loc[data.df[j] <= s]
         pr = data.df.loc[data.df[j] > s]
         if len(pl) >= minNodeSize and len(pr) >= minNodeSize:
             node.Split(j, s)
-            q.put((node.leftDescendant, pl, cl))
-            q.put((node.rightDescendant, pr, cr))
+            q.put((node.leftDescendant, pl, cl, level + 1))
+            q.put((node.rightDescendant, pr, cr, level + 1))
         else:
             node.MakeTerminal(c)
 
