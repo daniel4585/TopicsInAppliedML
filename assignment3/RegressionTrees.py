@@ -33,9 +33,9 @@ class RegressionTreeNode(object):
         if self.const:
             return "\t" * tabs + "return " + str(self.const) + "\n"
         strRep = "\t" * tabs + "if x['" + self.j + "'] <= " + str(self.s) + " then:\n" \
-                 + self.leftDescendant.printSubTree(tabs + 1) \
+                 + self.leftDescendant.TreeToString(tabs + 1) \
                  + "\t" * tabs + "if x['" + self.j + "'] > " + str(self.s) + " then:\n" \
-                 + self.rightDescendant.printSubTree(tabs + 1)
+                 + self.rightDescendant.TreeToString(tabs + 1)
         return strRep
 
 

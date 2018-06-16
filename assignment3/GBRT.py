@@ -6,10 +6,10 @@ from math import log
 
 
 def calculateLoss(data, ensemble):
-    return data.apply(lambda x: (x["SalePrice"] - ensemble.Evaluate(x)) ** 2, axis=1).sum() / data.shape(0)
+    return data.apply(lambda x: (x["SalePrice"] - ensemble.Evaluate(x)) ** 2, axis=1).sum() / data.shape[0]
 
 
-def GBRT(data, test, M, J, minNodeSize):
+def GBRT(data, test, M, J, minNodeSize, Nu):
     ensemble = RegressionTreeEnsemble(M=M)
     maxDepth = log(J, 2) + 1
 
@@ -28,7 +28,7 @@ def GBRT(data, test, M, J, minNodeSize):
         ensemble.AddTree(regressionTree, bm)
 
         # Update fm
-        fm = fm - bm * copiedData["SalePrice"]
+        fm = fm - Nu * bm * copiedData["SalePrice"]
 
         trainLoss = calculateLoss(data, ensemble)
         testLoss = calculateLoss(test, ensemble)
