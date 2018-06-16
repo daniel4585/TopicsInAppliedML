@@ -22,15 +22,15 @@ class RegressionTreeNode(object):
         self.rightDescendant = RegressionTreeNode()
 
 
-    def printSubTree(self):
+    def printSubTree(self, tabs):
         if self.const:
-            return "return " + str(self.const)
+            return "\t" * tabs + "return " + str(self.const)
 
-        s = "if x['" + self.j + "']<=" + str(self.s) + " then:\n" \
-            + self.leftDescendant.printSubTree() + "\n" \
-            + "if x['" + self.j + "']>" + str(self.s) + " then:\n" \
-            + self.rightDescendant.printSubTree() + "\n"
-        return s
+        strRep = "\t" * tabs + "if x['" + self.j + "'] <= " + str(self.s) + " then:\n" \
+            + self.leftDescendant.printSubTree(tabs + 1) + "\n" \
+            + "\t" * tabs + "if x['" + self.j + "'] > " + str(self.s) + " then:\n" \
+            + self.rightDescendant.printSubTree(tabs + 1) + "\n"
+        return strRep
 
 
 class RegressionTree(object):

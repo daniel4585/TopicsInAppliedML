@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from TrainData import TrainData
 from ValidationData import ValidationData
+from CART import CART
 
 
 def main():
@@ -17,8 +18,8 @@ def main():
     td = TrainData(train)
     vd = ValidationData(validation, td.cat_mapping, td.cat_mapping_avg, td.numerical_mapping)
 
-
-
+    regressionTree = CART(td, maxDepth=2, minNodeSize=20)
+    print(regressionTree.GetRoot().printSubTree(0))
 
 
 
