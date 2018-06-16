@@ -24,12 +24,12 @@ class RegressionTreeNode(object):
 
     def printSubTree(self, tabs):
         if self.const:
-            return "\t" * tabs + "return " + str(self.const)
+            return "\t" * tabs + "return " + str(self.const) + "\n"
 
         strRep = "\t" * tabs + "if x['" + self.j + "'] <= " + str(self.s) + " then:\n" \
-            + self.leftDescendant.printSubTree(tabs + 1) + "\n" \
+            + self.leftDescendant.printSubTree(tabs + 1) \
             + "\t" * tabs + "if x['" + self.j + "'] > " + str(self.s) + " then:\n" \
-            + self.rightDescendant.printSubTree(tabs + 1) + "\n"
+            + self.rightDescendant.printSubTree(tabs + 1)
         return strRep
 
 
