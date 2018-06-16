@@ -9,26 +9,30 @@ def calculateLoss(data, ensemble):
     return data.apply(lambda x: (x["SalePrice"] - ensemble.Evaluate(x)) ** 2, axis=1).sum() / data.shape[0]
 
 
-def GBRT(data, test, M, J, minNodeSize, Nu):
+def GBRT(data, test, M, J, minNodeSize, Nu=1.0, Eta=1.0):
     ensemble = RegressionTreeEnsemble(M=M)
-    maxDepth = log(J, 2) + 1
+    maxDepth = int(log(J, 2))
 
     copiedData = data.copy()
+    y = data["SalePrice"]
 
     fm = copiedData["SalePrice"].mean()
     for m in range(M):
         print("Generating tree: " + str(m))
-        gim = -1 * (data["SalePrice"] - fm)
+        gim = -1 * (y - fm)
         copiedData["SalePrice"] = gim
-        regressionTree = CART(copiedData, maxDepth, minNodeSize)
+
+        # Subsampling
+        subsampled = copiedData.sample(frac=Eta)
+        regressionTree = CART(subsampled, maxDepth, minNodeSize)
 
         # Calculate weight
-        data["SalePrice"] = copiedData.apply(lambda x: regressionTree.Evaluate(x), axis=1)
-        bm = (-1.0 * gim * copiedData["SalePrice"]).sum() / (copiedData["SalePrice"] ** 2).sum()
+        phi = copiedData.apply(lambda x: regressionTree.Evaluate(x), axis=1)
+        bm = (1.0 * gim * phi).sum() / (phi ** 2).sum()
         ensemble.AddTree(regressionTree, bm)
 
         # Update fm
-        fm = fm - Nu * bm * copiedData["SalePrice"]
+        fm = fm - Nu * bm * phi
 
         trainLoss = calculateLoss(data, ensemble)
         testLoss = calculateLoss(test, ensemble)

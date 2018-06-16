@@ -22,7 +22,7 @@ def main():
     #regressionTree = CART(td.df, maxDepth=10, minNodeSize=4)
     #regressionTree.GetRoot().printSubTree()
 
-    ensemble = GBRT(td.df, vd.df, M=2, J=2, minNodeSize=4, Nu=1.0)
+    ensemble = GBRT(td.df, vd.df, M=6, J=4, minNodeSize=20, Nu=1.0, Eta=1.0)
     for tree in ensemble.trees:
         tree.GetRoot().printSubTree()
 

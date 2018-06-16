@@ -27,7 +27,7 @@ def GetOptimalPartition(p):
                 min_j = j
                 min_cl = c_lt
                 min_cr = c_gt
-    return  min_j, min_s, min_cl, min_cr
+    return min_j, min_s, min_cl, min_cr
 
 
 def CART(data, maxDepth, minNodeSize):
@@ -45,8 +45,8 @@ def CART(data, maxDepth, minNodeSize):
             continue
 
         j, s, cl, cr = GetOptimalPartition(p)
-        pl = data.loc[data[j] <= s]
-        pr = data.loc[data[j] > s]
+        pl = p.loc[p[j] <= s]
+        pr = p.loc[p[j] > s]
         if len(pl) >= minNodeSize and len(pr) >= minNodeSize:
             node.Split(j, s)
             q.put((node.leftDescendant, pl, cl, level + 1))
