@@ -37,7 +37,10 @@ class RegressionTreeNode(object):
                  + "\t" * tabs + "if x['" + self.j + "'] > " + str(self.s) + " then:\n" \
                  + self.rightDescendant.TreeToString(tabs + 1)
         return strRep
-
+    def getFeatureImprortance(self, data):
+        feat_importance = []
+        for col in data:
+            feat_importance.append(self.getImportance(data))
 
 class RegressionTree(object):
     def __init__(self, root):
@@ -56,6 +59,9 @@ class RegressionTree(object):
                 node = node.leftDescendant
             else:
                 node = node.rightDescendant
+
+    def __str__(self):
+        return self.GetRoot().TreeToString(0)
 
 
 

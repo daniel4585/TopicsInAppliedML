@@ -5,14 +5,15 @@ import numpy as np
 from RegressionTrees import RegressionTreeNode
 
 
-def GetOptimalPartition(p):
+def GetOptimalPartition(p, numThresholds):
     min_l = np.inf
     min_s = 0
     min_j = 0
     min_cl = 0
     min_cr = 0
     for j in p.drop("SalePrice", axis=1):
-        s_j = p[j].unique()
+        precentiles = np.linspace(0.0, 1.0, numThresholds, False)
+        s_j = [p[j].quantile(x) for x in precentiles[1:]]
         for s in s_j:
             R_lt = p.loc[p[j] <= s]
             R_gt = p.loc[p[j] > s]
@@ -30,7 +31,7 @@ def GetOptimalPartition(p):
     return  min_j, min_s, min_cl, min_cr
 
 
-def CART(data, maxDepth, minNodeSize):
+def CART(data, maxDepth, minNodeSize, numThresholds):
     if maxDepth == 0:
         print "Max depth must be greater than 1"
         return None
@@ -43,10 +44,9 @@ def CART(data, maxDepth, minNodeSize):
         if level == maxDepth:
             node.MakeTerminal(c)
             continue
-
-        j, s, cl, cr = GetOptimalPartition(p)
-        pl = data.loc[data[j] <= s]
-        pr = data.loc[data[j] > s]
+        j, s, cl, cr = GetOptimalPartition(p, numThresholds)
+        pl = p.loc[p[j] <= s]
+        pr = p.loc[p[j] > s]
         if len(pl) >= minNodeSize and len(pr) >= minNodeSize:
             node.Split(j, s)
             q.put((node.leftDescendant, pl, cl, level + 1))
@@ -59,4 +59,7 @@ def CART(data, maxDepth, minNodeSize):
         node.MakeTerminal(c)
 
     return RegressionTree(root)
+
+def calculateLoss(data, tree):
+    return data.apply(lambda x: (x["SalePrice"] - tree.Evaluate(x)) ** 2, axis=1).sum() / data.shape[0]
 

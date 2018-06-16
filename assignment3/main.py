@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from TrainData import TrainData
 from ValidationData import ValidationData
-from CART import CART
+from CART import CART, calculateLoss
 from GBRT import GBRT
 
 
@@ -19,12 +19,30 @@ def main():
     vd = ValidationData(validation, td.cat_mapping, td.cat_mapping_avg, td.numerical_mapping)
 
     #print(pd.DataFrame.info(td.df))
-    #regressionTree = CART(td.df, maxDepth=10, minNodeSize=4)
+    prev = 0
+    current = 0
+    regressionTree = CART(td.df, maxDepth=3, minNodeSize=4, numThresholds=10)
+    current = calculateLoss(td.df, regressionTree)
+    print "train loss 3 " + str(current) + " diff = " + str(current - prev)
+    print regressionTree
+    prev = current
+
+    regressionTree = CART(td.df, maxDepth=4, minNodeSize=4, numThresholds=10)
+    current = calculateLoss(td.df, regressionTree)
+    print "train loss 5 " + str(current) + " diff = " + str(current - prev)
+    print regressionTree
+    prev = current
+
+    regressionTree = CART(td.df, maxDepth=5, minNodeSize=4, numThresholds=10)
+    current = calculateLoss(td.df, regressionTree)
+    print "train loss 7 " + str(current) + " diff = " + str(current - prev)
+    print regressionTree
+    prev = current
     #regressionTree.GetRoot().printSubTree()
 
-    ensemble = GBRT(td.df, vd.df, M=2, J=2, minNodeSize=4, Nu=1.0)
-    for tree in ensemble.trees:
-        tree.GetRoot().printSubTree()
+    # ensemble = GBRT(td.df, vd.df, M=2, J=2, minNodeSize=4, Nu=1.0)
+    # for tree in ensemble.trees:
+    #     tree.GetRoot().printSubTree()
 
 
 
