@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 
-class TestData(object):
+class ValidationData(object):
     def __init__(self, dataframe, cat_mapping, numerical_mapping):
         self.df = dataframe
 

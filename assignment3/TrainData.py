@@ -6,9 +6,13 @@ import pandas as pd
 
 class TrainData(object):
     def __init__(self, dataframe):
-        self.numerical_mapping = buildNumericalMapping(dataframe)
         self.df = dataframe.fillna(dataframe.mean())
+        self.numerical_mapping = buildNumericalMapping(dataframe)
         self.cat_mapping = buildCatMapping(self.df)
+
+        for col, val in self.df.select_dtypes(['object']).iteritems():
+
+
 
 
 # Build category mapping for each column
@@ -33,6 +37,7 @@ def buildCatMapping(train):
         for element in sorted:
             cat_mapping[(col, element[1])] = (rank, cat_mapping[(col, element[1])])
             rank += 1
+
 
     return cat_mapping
 
