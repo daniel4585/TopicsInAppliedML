@@ -8,9 +8,12 @@ class TrainData(object):
     def __init__(self, dataframe):
         self.df = dataframe.fillna(dataframe.mean())
         self.numerical_mapping = buildNumericalMapping(dataframe)
-        self.cat_mapping = buildCatMapping(self.df)
+        self.cat_mapping, self.cat_mapping_avg = buildCatMapping(self.df)
 
         for col, val in self.df.select_dtypes(['object']).iteritems():
+            self.df[col + "Rank"] = val.apply(lambda x: self.cat_mapping[(col, x)][0])
+            self.df = self.df.drop(col, axis=1)
+
 
 
 
@@ -19,6 +22,7 @@ class TrainData(object):
 def buildCatMapping(train):
     categorical_only = train.select_dtypes(['object'])
     cat_mapping = {} # key = (column, value), value = (rank, avg_price)
+    cat_mapping_avg = {} # key = col, value = avg rank
     for col, val in categorical_only.iteritems():
         unique = set(val.values)
         for unique_value in unique:
@@ -38,8 +42,9 @@ def buildCatMapping(train):
             cat_mapping[(col, element[1])] = (rank, cat_mapping[(col, element[1])])
             rank += 1
 
+        cat_mapping_avg[col] = rank // 2
 
-    return cat_mapping
+    return cat_mapping, cat_mapping_avg
 
 
 # Build numerical mapping for each column
