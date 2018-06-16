@@ -6,8 +6,7 @@ from math import log
 
 
 def calculateLoss(data, ensemble):
-    return reduce(lambda x, y: x+y, map(lambda r: (r["SalePrice"] - ensemble.Evaluate(r)) ** 2, data))
-
+    return data.apply(lambda x: (x["SalePrice"] - ensemble.Evaluate(x)) ** 2, axis=1).sum() / data.shape(0)
 
 
 def GBRT(data, test, M, J, minNodeSize):
@@ -24,7 +23,7 @@ def GBRT(data, test, M, J, minNodeSize):
         regressionTree = CART(copiedData, maxDepth, minNodeSize)
 
         # Calculate weight
-        data["SalePrice"] = copiedData.apply(lambda x: regressionTree.Evaluate(x))
+        data["SalePrice"] = copiedData.apply(lambda x: regressionTree.Evaluate(x), axis=1)
         bm = (-1.0 * gim * copiedData["SalePrice"]).sum() / (copiedData["SalePrice"] ** 2).sum()
         ensemble.AddTree(regressionTree, bm)
 

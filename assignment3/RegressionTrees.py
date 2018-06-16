@@ -26,14 +26,16 @@ class RegressionTreeNode(object):
         self.rightDescendant = RegressionTreeNode()
 
 
-    def printSubTree(self, tabs):
+    def printSubTree(self):
+        print(self.TreeToString(0))
+
+    def TreeToString(self, tabs):
         if self.const:
             return "\t" * tabs + "return " + str(self.const) + "\n"
-
         strRep = "\t" * tabs + "if x['" + self.j + "'] <= " + str(self.s) + " then:\n" \
-            + self.leftDescendant.printSubTree(tabs + 1) \
-            + "\t" * tabs + "if x['" + self.j + "'] > " + str(self.s) + " then:\n" \
-            + self.rightDescendant.printSubTree(tabs + 1)
+                 + self.leftDescendant.printSubTree(tabs + 1) \
+                 + "\t" * tabs + "if x['" + self.j + "'] > " + str(self.s) + " then:\n" \
+                 + self.rightDescendant.printSubTree(tabs + 1)
         return strRep
 
 
@@ -74,6 +76,6 @@ class RegressionTreeEnsemble(object):
 
     def Evaluate(self, x, m=np.inf):
         res = 0
-        for i in range(min(m, self.M)):
+        for i in range(min(m, self.M, len(self.trees))):
             res += self.trees[i].Evaluate(x) * self.weights[i]
         return res

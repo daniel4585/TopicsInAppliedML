@@ -18,15 +18,13 @@ def main():
     td = TrainData(train)
     vd = ValidationData(validation, td.cat_mapping, td.cat_mapping_avg, td.numerical_mapping)
 
-    print(pd.DataFrame.info(td.df))
+    #print(pd.DataFrame.info(td.df))
     #regressionTree = CART(td.df, maxDepth=10, minNodeSize=4)
-    #print(regressionTree.GetRoot().printSubTree(0))
+    #regressionTree.GetRoot().printSubTree()
 
-    ensemble = GBRT(td.df, vd.df, 3, 3, minNodeSize=4)
+    ensemble = GBRT(td.df, vd.df, 2, 2, minNodeSize=4)
     for tree in ensemble.trees:
-        print(tree.GetRoot().printSubTree(0))
-
-
+        tree.GetRoot().printSubTree()
 
 
 if __name__ == '__main__':
