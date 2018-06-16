@@ -33,23 +33,22 @@ def GetOptimalPartition(p, numThresholds=np.inf):
 
 def CART(data, maxDepth, minNodeSize, numThresholds):
     q = Queue()
-    root = RegressionTreeNode()
-    q.put((root, data, data["SalePrice"].mean(), 0))
+
+    c_root = data["SalePrice"].mean()
+    root = RegressionTreeNode(const=c_root)
+    q.put((root, data, 0))
     while q.qsize() != 0:
-        node, p, c, level = q.get()
+        node, p,  level = q.get()
         if level == maxDepth:
-            node.MakeTerminal(c)
             continue
 
         j, s, cl, cr = GetOptimalPartition(p, numThresholds)
         pl = p.loc[p[j] <= s]
         pr = p.loc[p[j] > s]
         if len(pl) >= minNodeSize and len(pr) >= minNodeSize:
-            node.Split(j, s)
-            q.put((node.leftDescendant, pl, cl, level + 1))
-            q.put((node.rightDescendant, pr, cr, level + 1))
-        else:
-            node.MakeTerminal(c)
+            node.Split(j, s, cl, cr)
+            q.put((node.leftDescendant, pl, level + 1))
+            q.put((node.rightDescendant, pr, level + 1))
 
     while q.qsize() != 0:
         node, _, c = q.get()
