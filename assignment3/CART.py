@@ -38,7 +38,7 @@ def CART(data, maxDepth, minNodeSize, numThresholds):
     root = RegressionTreeNode(const=c_root)
     q.put((root, data, 0))
     while q.qsize() != 0:
-        node, p,  level = q.get()
+        node, p, level = q.get()
         if level == maxDepth:
             continue
 

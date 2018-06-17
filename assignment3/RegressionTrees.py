@@ -111,7 +111,7 @@ class RegressionTreeEnsemble(object):
         self.c = c
 
     def Evaluate(self, x, m=np.inf):
-        res = 0
+        res = self.c
         for i in range(min(m, self.M, len(self.trees))):
-            res += self.trees[i].Evaluate(x) * self.weights[i]
+            res -= self.trees[i].Evaluate(x) * self.weights[i]
         return res
