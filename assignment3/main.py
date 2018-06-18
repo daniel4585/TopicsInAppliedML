@@ -12,6 +12,7 @@ from Hyperparams import Hyperparams
 import ConfigParser
 from GBRT import GBRT_WithLoss
 from Diagnostics import plot_varientParam
+from Diagnostics import plot_Bar
 
 
 def pickle_load(path):
@@ -44,25 +45,25 @@ def main():
         # pickle_save('ensemble_1.pkl', ensemble)
         # ensemble = pickle_load('ensemble_1.pkl')
 
-        hyperParams2 = Hyperparams(maxDepth=64, eta=0.5, nu=1.0, numOfTrees=100, minNodeSize=5)
-        ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams2, outputFile="results_2.txt")
-        pickle_save('ensemble_2.pkl', ensemble)
-        ensemble = pickle_load('ensemble_2.pkl')
+        # hyperParams2 = Hyperparams(maxDepth=64, eta=0.5, nu=1.0, numOfTrees=100, minNodeSize=5)
+        # ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams2, outputFile="results_2.txt")
+        # pickle_save('ensemble_2.pkl', ensemble)
+        # ensemble = pickle_load('ensemble_2.pkl')
 
         # hyperParams3 = Hyperparams(maxDepth=16, eta=0.5, nu=1.0, numThresholds=10, numOfTrees=100, minNodeSize=5)
         # ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams3, outputFile="results_3.txt")
         # pickle_save('ensemble_3.pkl', ensemble)
         # ensemble = pickle_load('ensemble_3.pkl')
-        #
-        # hyperParams4 = Hyperparams(maxDepth=16, eta=0.75, nu=1.0, numOfTrees=100, minNodeSize=5)
-        # ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams4, outputFile="results_4.txt")
-        # pickle_save('ensemble_4.pkl', ensemble)
-        # ensemble = pickle_load('ensemble_4.pkl')
+
+        hyperParams4 = Hyperparams(maxDepth=16, eta=0.75, nu=1.0, numOfTrees=100, minNodeSize=5)
+        ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams4, outputFile="results_4.txt")
+        pickle_save('ensemble_4.pkl', ensemble)
+        ensemble = pickle_load('ensemble_4.pkl')
 
         # plot_TrainTestError(hyperParams1, "results_1.txt")
-        plot_TrainTestError(hyperParams2, "results_2.txt")
+        # plot_TrainTestError(hyperParams2, "results_2.txt")
         # plot_TrainTestError(hyperParams3, "results_3.txt")
-        # plot_TrainTestError(hyperParams4, "results_4.txt")
+        plot_TrainTestError(hyperParams4, "results_4.txt")
 
     if config.getboolean('Debug', 'deliv3.1'):
         maxDepthValues = [2**n for n in range(1, 8)]
@@ -102,6 +103,12 @@ def main():
         plot_varientParam(hyperParams, maxDepthValues, finalTrainLoss, finalTestLoss, maxDepthTimes,
                           "Num of Thresholds", "Num of Thresholds")
 
+
+    if config.getboolean('Debug', 'deliv4'):
+        ensemble = pickle_load("ensemble.pkl")
+        for i in range(5):
+            print ensemble.trees[i]
+        plot_Bar(ensemble.getFeatureImprortance(td.df))
 
 
 

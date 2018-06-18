@@ -1,5 +1,7 @@
 from Hyperparams import Hyperparams
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 def plot_TrainTestError(hyperparams, outputFile="results.txt"):
     trainLoss = []
@@ -34,4 +36,37 @@ def plot_varientParam(hyperParams, x_axis, finalTrainLosses, finalTestLosses, to
     line1, = ax2.plot(x_axis, total_time)
     ax2.set_title("Train Time as a function of " + title)
     ax1.set(xlabel=x_axis_label, ylabel='Time in S')
+    plt.show()
+
+
+
+def plot_Bar(importantFeatures):
+
+    featureNames = [x[0] for x in importantFeatures]
+    featureImportance = [x[1] for x in importantFeatures]
+    N = len(importantFeatures)
+    ind = np.arange(N)  # the x locations for the groups
+    width = 0.15       # the width of the bars
+
+    fig, ax = plt.subplots()
+    rects1 = ax.bar(ind, featureImportance, width, color='r')
+
+    # add some text for labels, title and axes ticks
+    ax.set_ylabel('Feature Importance')
+    ax.set_title('Normalized Feature Importance')
+    ax.set_xticks(ind + width / 2)
+    ax.set_xticklabels(featureNames)
+
+    def autolabel(rects):
+        """
+        Attach a text label above each bar displaying its height
+        """
+        for rect in rects:
+            height = rect.get_height()
+            ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
+                    '%f' % float(height),
+                    ha='center', va='bottom')
+
+    autolabel(rects1)
+    plt.xticks(fontsize=14, rotation=90)
     plt.show()
