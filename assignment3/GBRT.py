@@ -19,7 +19,7 @@ def GBRT_WithLoss(data, test, hyperparams, outputFile="results.txt"):
     except OSError, IOError:
         pass
 
-    copiedData = data.copy()
+    copiedData = data.copy(deep="all")
     y = data["SalePrice"]
     ensemble.SetInitialConstant(y.mean())
 

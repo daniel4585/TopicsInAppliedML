@@ -72,7 +72,7 @@ def main():
 
         for maxDepth in maxDepthValues:
             start = time.time()
-            hyperParams = Hyperparams(maxDepth=maxDepth, eta=0.75, nu=1.0, numOfTrees=75, minNodeSize=5)
+            hyperParams = Hyperparams(maxDepth=maxDepth, eta=0.75, nu=1.0, numOfTrees=50, minNodeSize=5)
             ensemble, trainLoss, testLoss = GBRT_WithLoss(td.df, vd.df, hyperparams=hyperParams)
             maxDepthTimes.append(time.time() - start)
             finalTrainLoss.append(trainLoss)
