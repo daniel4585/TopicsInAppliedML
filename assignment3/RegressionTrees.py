@@ -33,7 +33,7 @@ class RegressionTreeNode(object):
     def TreeToString(self, tabs):
         if self.isLeaf():
             return "\t" * tabs + "return " + str(self.const) + "\n"
-        strRep = "\t" * tabs + "if x['" + self.j + "'] <= " + str(self.s) + " then:\n" \
+        strRep = "\t" * tabs + "C: " + str(self.const) + " if x['" + self.j + "'] <= " + str(self.s) + " then:\n" \
                  + self.leftDescendant.TreeToString(tabs + 1) \
                  + "\t" * tabs + "if x['" + self.j + "'] > " + str(self.s) + " then:\n" \
                  + self.rightDescendant.TreeToString(tabs + 1)
@@ -63,15 +63,17 @@ class RegressionTree(object):
     def __str__(self):
         return self.GetRoot().TreeToString(0)
 
-    def getFeatureImprortance(self, data):
-        featImportance = defaultdict(int)
-        self.getImportance(data, self.GetRoot(), featImportance)
 
-        print featImportance
-        return featImportance
-
-
-    def getImportance(self, data, node, featImportance):
+    """
+    this is the recursive call for feature importance it iterates preorder over the tree and passes the featimporatance
+    dictionary calculating the split goodness in each inner node 
+    
+    :param data: the data - is sliced according to node split at each recursive call
+    :param node: the current node
+    :param featImportance: feature importance memoization dictionary
+    :return: updated the featImportance dictionary for all sub tree.
+    """
+    def getFeatureImprortance(self, data, node, featImportance):
         if node.isLeaf():
             return
         pl = data.loc[data[node.j] <= node.s]
@@ -87,11 +89,11 @@ class RegressionTree(object):
         sum = ((data["SalePrice"] - node.const)**2).sum()
 
         # update feature importance
-        featImportance[node.j] += sumL + sumR - sum
+        featImportance[node.j] += sum - sumL + sumR
 
         # call recursively on left and right defendants
-        self.getImportance(pl, node.leftDescendant, featImportance)
-        self.getImportance(pr, node.rightDescendant, featImportance)
+        self.getFeatureImprortance(pl, node.leftDescendant, featImportance)
+        self.getFeatureImprortance(pr, node.rightDescendant, featImportance)
 
 
 
@@ -115,3 +117,25 @@ class RegressionTreeEnsemble(object):
         for i in range(min(m, self.M, len(self.trees))):
             res -= self.trees[i].Evaluate(x) * self.weights[i]
         return res
+
+
+    """
+    Calculates the feature importance of an ensumble of trees according to a given data set
+
+    :param data: the data set
+    :return: Normlized and sorted feature importance lsit
+    """
+    def getFeatureImprortance(self, data):
+        featImportance = defaultdict(int)
+        featSortedNormlized = []
+        mostImportentValue = np.inf
+
+        for i in range(min(self.M, len(self.trees))):
+            self.trees[i].getFeatureImprortance(data=data, node=self.trees[i].GetRoot(),featImportance=featImportance)
+
+        # sort and normalize
+        for key, value in sorted(featImportance.iteritems(), key=lambda (k, v): (v, k), reverse=True):
+            if mostImportentValue == np.inf:
+                mostImportentValue = value
+            featSortedNormlized.append((key, value / mostImportentValue))
+        return featSortedNormlized
