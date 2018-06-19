@@ -33,7 +33,7 @@ class RegressionTreeNode(object):
     def TreeToString(self, tabs):
         if self.isLeaf():
             return "\t" * tabs + "return " + str(self.const) + "\n"
-        strRep = "\t" * tabs + "C: " + str(self.const) + " if x['" + self.j + "'] <= " + str(self.s) + " then:\n" \
+        strRep = "\t" * tabs + "if x['" + self.j + "'] <= " + str(self.s) + " then:\n" \
                  + self.leftDescendant.TreeToString(tabs + 1) \
                  + "\t" * tabs + "if x['" + self.j + "'] > " + str(self.s) + " then:\n" \
                  + self.rightDescendant.TreeToString(tabs + 1)
