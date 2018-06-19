@@ -8,8 +8,10 @@ import os
 def calculateLoss(data, ensemble):
     return data.apply(lambda x: (x["SalePrice"] - ensemble.Evaluate(x)) ** 2, axis=1).mean()
 
+
 def GBRT(data, test, hyperparams, outputFile="results.txt"):
     ensamble, _ , _ = GBRT_WithLoss(data, test, hyperparams, outputFile)
+
 def GBRT_WithLoss(data, test, hyperparams, outputFile="results.txt"):
     ensemble = RegressionTreeEnsemble(M=hyperparams.numOfTrees)
     maxDepth = int(log(hyperparams.maxDepth, 2))
@@ -19,7 +21,7 @@ def GBRT_WithLoss(data, test, hyperparams, outputFile="results.txt"):
     except OSError, IOError:
         pass
 
-    copiedData = data.copy(deep="all")
+    copiedData = data.copy()
     y = data["SalePrice"]
     ensemble.SetInitialConstant(y.mean())
 

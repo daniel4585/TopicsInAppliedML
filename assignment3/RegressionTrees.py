@@ -98,12 +98,11 @@ class RegressionTree(object):
 
 
 class RegressionTreeEnsemble(object):
-    def __init__(self, trees=list(), weights=list(), M=0, c=None):
-        self.trees = trees
-        self.weights = weights
+    def __init__(self, M=0):
+        self.trees = []
+        self.weights = []
         self.M = M
-        self.c = c
-        self.trees = trees
+        self.c = 0
 
     def AddTree(self, tree, weight):
         self.trees.append(tree)
