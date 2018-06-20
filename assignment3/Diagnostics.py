@@ -14,12 +14,15 @@ def plot_TrainTestError(hyperparams, outputFile="results.txt"):
             if i % 2 == 1:
                 testLoss.append(float(x.split(':')[1]))
 
-    line1, = plt.plot(range(0, hyperparams.numOfTrees), trainLoss, label="Train Loss")
-    line2, = plt.plot(range(0, hyperparams.numOfTrees), testLoss, label="Test Loss")
+    line1, = plt.plot(range(0, len(trainLoss)), trainLoss, label="Train Loss")
+    line2, = plt.plot(range(0, len(trainLoss)), testLoss, label="Test Loss")
     plt.suptitle("Loss as a function of number of iterations. \n Model hyper params:" + str(hyperparams))
     plt.legend(handles=[line1, line2])
     plt.xlabel("# of Trees")
     plt.ylabel("Mean Loss")
+
+    print(testLoss.index(min(testLoss)))
+    print "val" + str(min(testLoss))
     plt.show()
 
 

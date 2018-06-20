@@ -8,6 +8,8 @@ from Queue import Queue
 from copy import deepcopy as deepcopy
 import sys
 
+import target_global
+
 
 class RegressionTreeNode(object):
     def __init__(self, j=None, s=None, leftDescendant=None, rightDescendant=None, const=None):
@@ -80,13 +82,13 @@ class RegressionTree(object):
         pr = data.loc[data[node.j] > node.s]
 
         # calculate left node sum
-        sumL = ((pl["SalePrice"] - node.leftDescendant.const)**2).sum()
+        sumL = ((pl[target_global.target_name] - node.leftDescendant.const)**2).sum()
 
         #calculate right node sum
-        sumR = ((pr["SalePrice"] - node.rightDescendant.const)**2).sum()
+        sumR = ((pr[target_global.target_name] - node.rightDescendant.const)**2).sum()
 
         # calculate sum with no split
-        sum = ((data["SalePrice"] - node.const)**2).sum()
+        sum = ((data[target_global.target_name] - node.const)**2).sum()
 
         # update feature importance
         featImportance[node.j] += sum - sumL + sumR

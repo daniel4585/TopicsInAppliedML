@@ -3,6 +3,7 @@ from RegressionTrees import RegressionTree
 import numpy as np
 
 from RegressionTrees import RegressionTreeNode
+import target_global
 
 
 def GetOptimalPartition(p, numThresholds=np.inf):
@@ -11,17 +12,17 @@ def GetOptimalPartition(p, numThresholds=np.inf):
     min_j = 0
     min_cl = 0
     min_cr = 0
-    for j in p.drop("SalePrice", axis=1):
+    for j in p.drop(target_global.target_name, axis=1):
         precentiles = np.linspace(0.0, 1.0, min(numThresholds, p[j].nunique()), False)
         s_j = [p[j].quantile(x) for x in precentiles[1:]]
         for s in s_j:
             R_lt = p.loc[p[j] <= s]
             R_gt = p.loc[p[j] > s]
-            c_lt = 0 if R_lt.shape[0] == 0 else (1.0/R_lt.shape[0]) * R_lt["SalePrice"].sum()
-            c_gt = 0 if R_gt.shape[0] == 0 else (1.0/R_gt.shape[0]) * R_gt["SalePrice"].sum()
+            c_lt = 0 if R_lt.shape[0] == 0 else (1.0/R_lt.shape[0]) * R_lt[target_global.target_name].sum()
+            c_gt = 0 if R_gt.shape[0] == 0 else (1.0/R_gt.shape[0]) * R_gt[target_global.target_name].sum()
             l = 0
-            l += ((R_lt["SalePrice"] - c_lt) ** 2).sum()
-            l += ((R_gt["SalePrice"] - c_gt) ** 2).sum()
+            l += ((R_lt[target_global.target_name] - c_lt) ** 2).sum()
+            l += ((R_gt[target_global.target_name] - c_gt) ** 2).sum()
             if l < min_l:
                 min_l = l
                 min_s = s
@@ -34,7 +35,7 @@ def GetOptimalPartition(p, numThresholds=np.inf):
 def CART(data, maxDepth, minNodeSize, numThresholds):
     q = Queue()
 
-    c_root = data["SalePrice"].mean()
+    c_root = data[target_global.target_name].mean()
     root = RegressionTreeNode(const=c_root)
     q.put((root, data, 0))
     while q.qsize() != 0:
@@ -57,5 +58,5 @@ def CART(data, maxDepth, minNodeSize, numThresholds):
     return RegressionTree(root)
 
 def calculateLoss(data, tree):
-    return data.apply(lambda x: (x["SalePrice"] - tree.Evaluate(x)) ** 2, axis=1).sum() / data.shape[0]
+    return data.apply(lambda x: (x[target_global.target_name] - tree.Evaluate(x)) ** 2, axis=1).sum() / data.shape[0]
 

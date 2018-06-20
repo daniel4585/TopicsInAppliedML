@@ -5,8 +5,11 @@ from CART import CART
 from math import log
 import os
 
+import target_global
+
+
 def calculateLoss(data, ensemble):
-    return data.apply(lambda x: (x["SalePrice"] - ensemble.Evaluate(x)) ** 2, axis=1).mean()
+    return data.apply(lambda x: (x[target_global.target_name] - ensemble.Evaluate(x)) ** 2, axis=1).mean()
 
 
 def GBRT(data, test, hyperparams, outputFile="results.txt"):
@@ -23,14 +26,14 @@ def GBRT_WithLoss(data, test, hyperparams, outputFile="results.txt"):
         pass
 
     copiedData = data.copy()
-    y = data["SalePrice"]
+    y = data[target_global.target_name]
     ensemble.SetInitialConstant(y.mean())
 
-    fm = copiedData["SalePrice"].mean()
+    fm = copiedData[target_global.target_name].mean()
     for m in range(hyperparams.numOfTrees):
         print("Generating tree: " + str(m))
         gim = -1 * (y - fm)
-        copiedData["SalePrice"] = gim
+        copiedData[target_global.target_name] = gim
 
         # Subsampling and fit CART
         subsampled = copiedData.sample(frac=hyperparams.eta)
@@ -40,7 +43,6 @@ def GBRT_WithLoss(data, test, hyperparams, outputFile="results.txt"):
         phi = copiedData.apply(regressionTree.Evaluate, axis=1)
         bm = np.dot(gim, phi) / np.sum(np.power(phi, 2))
         ensemble.AddTree(regressionTree, hyperparams.nu * bm)
-        print("Bm " + str(bm))
 
         # Update fm
         fm = copiedData.apply(ensemble.Evaluate, axis=1)

@@ -1,5 +1,6 @@
 import pickle
 import time
+import target_global
 
 import numpy as np
 import pandas as pd
@@ -25,13 +26,19 @@ def pickle_save(path, value):
         pickle.dump(value, output, pickle.HIGHEST_PROTOCOL)
 
 
+
+
+
 def main():
     config = ConfigParser.ConfigParser()
     config.read("conf.ini")
 
-    df = pd.read_csv("data/train.csv")
+
+    target_global.target_name = config.get('Debug', 'target')
+
+    df = pd.read_csv("data2/train.csv")
     df = df.drop("Id", axis=1)
-    df = df[np.isfinite(df["SalePrice"])]
+    df = df[np.isfinite(df[target_global.target_name])]
 
     train, validation = np.split(df.sample(frac=1), [int(.8*len(df))])
 
@@ -42,28 +49,24 @@ def main():
 
         hyperParams1 = Hyperparams(maxDepth=16, eta=0.5, nu=1.0, numOfTrees=100, minNodeSize=5)
         ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams1, outputFile="results_1.txt")
-        pickle_save('ensemble_1.pkl', ensemble)
-        ensemble = pickle_load('ensemble_1.pkl')
+        pickle_save('ensemble_1_data2.pkl', ensemble)
 
-        hyperParams2 = Hyperparams(maxDepth=64, eta=0.5, nu=1.0, numOfTrees=100, minNodeSize=5)
-        ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams2, outputFile="results_2.txt")
-        pickle_save('ensemble_2.pkl', ensemble)
-        ensemble = pickle_load('ensemble_2.pkl')
+        hyperParams2 = Hyperparams(maxDepth=64, eta=0.5, nu=1.0, numOfTrees=50, minNodeSize=5)
+        ensemble = GBRT(td.df,vd.df, hyperparams=hyperParams2, outputFile="results_2.txt")
+        pickle_save('ensemble_2_data2.pkl', ensemble)
 
-        hyperParams3 = Hyperparams(maxDepth=16, eta=0.5, nu=1.0, numThresholds=10, numOfTrees=100, minNodeSize=5)
+        hyperParams3 = Hyperparams(maxDepth=16, eta=0.5, nu=1.0, numThresholds=10, numOfTrees=50, minNodeSize=5)
         ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams3, outputFile="results_3.txt")
-        pickle_save('ensemble_3.pkl', ensemble)
-        ensemble = pickle_load('ensemble_3.pkl')
+        pickle_save('ensemble_3_data2.pkl', ensemble)
 
-        hyperParams4 = Hyperparams(maxDepth=32, eta=0.75, nu=1.0, numThresholds=128, numOfTrees=85, minNodeSize=5)
+        hyperParams4 = Hyperparams(maxDepth=16, eta=0.75, nu=1.0, numOfTrees=50, minNodeSize=5)
         ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams4, outputFile="results_4.txt")
-        pickle_save('results_4.pkl', ensemble)
-        ensemble = pickle_load('results_4.pkl')
+        pickle_save('ensemble_4_data2.pkl', ensemble)
 
-        # plot_TrainTestError(hyperParams1, "results_1.txt")
-        # plot_TrainTestError(hyperParams2, "results_2.txt")
-        # plot_TrainTestError(hyperParams3, "results_3.txt")
-        plot_TrainTestError(hyperParams4, "final_model.txt")
+        plot_TrainTestError(hyperParams1, "results_1.txt")
+        plot_TrainTestError(hyperParams2, "results_2.txt")
+        plot_TrainTestError(hyperParams3, "results_3.txt")
+        plot_TrainTestError(hyperParams4, "results_4.txt")
 
     if config.getboolean('Debug', 'deliv3.1'):
         maxDepthValues = [2**n for n in range(1, 8)]
@@ -85,9 +88,9 @@ def main():
             maxDepthTimes.append(time.time() - start)
             finalTrainLoss.append(trainLoss)
             finalTestLoss.append(testLoss)
-            pickle_save("max_depth_times.pkl", maxDepthTimes)
-            pickle_save("max_depth_trainloss.pkl", finalTrainLoss)
-            pickle_save("max_depth_testloss.pkl", finalTestLoss)
+            pickle_save("d2_max_depth_times.pkl", maxDepthTimes)
+            pickle_save("d2_max_depth_trainloss.pkl", finalTrainLoss)
+            pickle_save("d2_max_depth_testloss.pkl", finalTestLoss)
         plot_varientParam(hyperParams, maxDepthValues, finalTrainLoss, finalTestLoss, maxDepthTimes, "Max Tree Depth",
                           "Max Tree Depth")
 
@@ -96,23 +99,29 @@ def main():
         numOfThresholdsValues = [2**n for n in range(2, 9)]
         numOfThresholdsTimes=[]
         finalTrainLoss = []
+        hyperParams = Hyperparams(maxDepth=16, eta=0.75, nu=1.0, numOfTrees=75, minNodeSize=5)
         finalTestLoss = []
         for numOfThresholds in numOfThresholdsValues:
             start = time.time()
-            hyperParams = Hyperparams(maxDepth=16, eta=0.75, nu=1.0, numOfTrees=75, minNodeSize=5, numThresholds=numOfThresholds)
             ensemble, trainLoss, testLoss = GBRT_WithLoss(td.df, vd.df, hyperparams=hyperParams)
             numOfThresholdsTimes.append(time.time() - start)
             finalTrainLoss.append(trainLoss)
             finalTestLoss.append(testLoss)
-            pickle_save("numOfThresholds_times.pkl", numOfThresholdsTimes)
-            pickle_save("numOfThresholds_trainloss.pkl", finalTrainLoss)
-            pickle_save("numOfThresholds_testloss.pkl", finalTestLoss)
-        plot_varientParam(hyperParams, maxDepthValues, finalTrainLoss, finalTestLoss, maxDepthTimes,
+            pickle_save("d2_numOfThresholds_times.pkl", numOfThresholdsTimes)
+            pickle_save("d2_numOfThresholds_trainloss.pkl", finalTrainLoss)
+            pickle_save("d2_numOfThresholds_testloss.pkl", finalTestLoss)
+
+
+
+        numOfThresholdsTimes = pickle_load("d2_numOfThresholds_times.pkl")
+        finalTrainLoss = pickle_load("d2_numOfThresholds_trainloss.pkl")
+        finalTestLoss = pickle_load("d2_numOfThresholds_testloss.pkl")
+        plot_varientParam(hyperParams, numOfThresholdsValues, finalTrainLoss, finalTestLoss, numOfThresholdsTimes,
                           "Num of Thresholds", "Num of Thresholds")
 
 
     if config.getboolean('Debug', 'deliv4'):
-        ensemble = pickle_load("ensemble.pkl")
+        ensemble = pickle_load("ensemble_2_data2.pkl")
         for i in range(5):
             print ensemble.trees[i]
         plot_Bar(ensemble.getFeatureImprortance(td.df))
@@ -143,8 +152,6 @@ def main():
 
             for index, row in testData.df.iterrows():
                 prediction.write(str(int(row["Id"])) + "," + str(ensemble.Evaluate(row)) + "\n")
-
-
 
 
 if __name__ == '__main__':

@@ -9,6 +9,7 @@ class Hyperparams(object):
         self.numThresholds = numThresholds
 
 
+
     def __str__(self):
         return "Max Depth: " + str(self.maxDepth) + " Eta: " + str(self.eta) + " Nu: " + str(
             self.nu) + " Num Thresholds: " + str(self.numThresholds) + " Num Of Trees: " + str(

@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import target_global
 
 
 class TrainData(object):
@@ -27,9 +28,9 @@ def buildCatMapping(train):
         unique = set(val.values)
         for unique_value in unique:
             if unique_value is np.nan:
-                cat_mapping[(col, unique_value)] = train[train[col].isnull()]["SalePrice"].mean()
+                cat_mapping[(col, unique_value)] = train[train[col].isnull()][target_global.target_name].mean()
             else:
-                cat_mapping[(col, unique_value)] = train[train[col] == unique_value]["SalePrice"].mean()
+                cat_mapping[(col, unique_value)] = train[train[col] == unique_value][target_global.target_name].mean()
 
         # Set rankings
         sorted = []
