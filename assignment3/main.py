@@ -40,36 +40,43 @@ def main():
 
     if config.getboolean('Debug', 'deliv2'):
 
-        # hyperParams1 = Hyperparams(maxDepth=16, eta=0.5, nu=1.0, numOfTrees=100, minNodeSize=5)
-        # ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams1, outputFile="results_1.txt")
-        # pickle_save('ensemble_1.pkl', ensemble)
-        # ensemble = pickle_load('ensemble_1.pkl')
+        hyperParams1 = Hyperparams(maxDepth=16, eta=0.5, nu=1.0, numOfTrees=100, minNodeSize=5)
+        ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams1, outputFile="results_1.txt")
+        pickle_save('ensemble_1.pkl', ensemble)
+        ensemble = pickle_load('ensemble_1.pkl')
 
-        # hyperParams2 = Hyperparams(maxDepth=64, eta=0.5, nu=1.0, numOfTrees=100, minNodeSize=5)
-        # ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams2, outputFile="results_2.txt")
-        # pickle_save('ensemble_2.pkl', ensemble)
-        # ensemble = pickle_load('ensemble_2.pkl')
+        hyperParams2 = Hyperparams(maxDepth=64, eta=0.5, nu=1.0, numOfTrees=100, minNodeSize=5)
+        ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams2, outputFile="results_2.txt")
+        pickle_save('ensemble_2.pkl', ensemble)
+        ensemble = pickle_load('ensemble_2.pkl')
 
-        # hyperParams3 = Hyperparams(maxDepth=16, eta=0.5, nu=1.0, numThresholds=10, numOfTrees=100, minNodeSize=5)
-        # ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams3, outputFile="results_3.txt")
-        # pickle_save('ensemble_3.pkl', ensemble)
-        # ensemble = pickle_load('ensemble_3.pkl')
+        hyperParams3 = Hyperparams(maxDepth=16, eta=0.5, nu=1.0, numThresholds=10, numOfTrees=100, minNodeSize=5)
+        ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams3, outputFile="results_3.txt")
+        pickle_save('ensemble_3.pkl', ensemble)
+        ensemble = pickle_load('ensemble_3.pkl')
 
-        hyperParams4 = Hyperparams(maxDepth=16, eta=0.75, nu=1.0, numOfTrees=100, minNodeSize=5)
+        hyperParams4 = Hyperparams(maxDepth=32, eta=0.75, nu=1.0, numThresholds=128, numOfTrees=85, minNodeSize=5)
         ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams4, outputFile="results_4.txt")
-        pickle_save('ensemble_4.pkl', ensemble)
-        ensemble = pickle_load('ensemble_4.pkl')
+        pickle_save('results_4.pkl', ensemble)
+        ensemble = pickle_load('results_4.pkl')
 
         # plot_TrainTestError(hyperParams1, "results_1.txt")
         # plot_TrainTestError(hyperParams2, "results_2.txt")
         # plot_TrainTestError(hyperParams3, "results_3.txt")
-        plot_TrainTestError(hyperParams4, "results_4.txt")
+        plot_TrainTestError(hyperParams4, "final_model.txt")
 
     if config.getboolean('Debug', 'deliv3.1'):
         maxDepthValues = [2**n for n in range(1, 8)]
         maxDepthTimes=[]
         finalTrainLoss = []
         finalTestLoss = []
+
+        # maxDepthTimes = pickle_load("max_depth_times.pkl")
+        # finalTrainLoss = pickle_load("max_depth_trainloss.pkl")
+        # finalTestLoss = pickle_load("max_depth_testloss.pkl")
+        hyperParams = Hyperparams(maxDepth=2, eta=0.75, nu=1.0, numOfTrees=50, minNodeSize=5)
+        plot_varientParam(hyperParams, maxDepthValues, finalTrainLoss, finalTestLoss, maxDepthTimes, "Max Tree Depth",
+                          "Max Tree Depth")
 
         for maxDepth in maxDepthValues:
             start = time.time()
@@ -111,11 +118,25 @@ def main():
         plot_Bar(ensemble.getFeatureImprortance(td.df))
 
 
+    if config.getboolean('Debug', 'train'):
+        hyperParams = Hyperparams(maxDepth=32, eta=0.75, nu=1.0, numThresholds=128, numOfTrees=85, minNodeSize=5)
+        ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams, outputFile="final_model.txt")
+        pickle_save('final_model.pkl', ensemble)
+        ensemble = pickle_load('final_model.pkl')
+
+        for i in range(5):
+            print ensemble.trees[i]
+        plot_TrainTestError(hyperParams, "final_model.txt")
 
 
+    if config.getboolean('Debug', 'test'):
 
+        ensemble = pickle_load('final_model.pkl')
+        test = pd.read_csv("data/test.csv")
 
-    # print ensemble.getFeatureImprortance(data=td.df)
+        with open("output/prediction.csv", "w") as prediction:
+            for index, row in test.iterrows():
+                prediction.write(str(row["Id"]) + "," + ensemble.Evaluate(row["SalePrice"]))
 
 
 
