@@ -10,7 +10,8 @@ def calculateLoss(data, ensemble):
 
 
 def GBRT(data, test, hyperparams, outputFile="results.txt"):
-    ensamble, _ , _ = GBRT_WithLoss(data, test, hyperparams, outputFile)
+    ensemble, _ , _ = GBRT_WithLoss(data, test, hyperparams, outputFile)
+    return ensemble
 
 def GBRT_WithLoss(data, test, hyperparams, outputFile="results.txt"):
     ensemble = RegressionTreeEnsemble(M=hyperparams.numOfTrees)

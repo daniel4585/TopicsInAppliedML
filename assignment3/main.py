@@ -119,7 +119,10 @@ def main():
 
 
     if config.getboolean('Debug', 'train'):
-        hyperParams = Hyperparams(maxDepth=32, eta=0.75, nu=1.0, numThresholds=128, numOfTrees=85, minNodeSize=5)
+        hyperParams = Hyperparams(maxDepth=16, eta=0.5, nu=1.0, numThresholds=10, numOfTrees=77, minNodeSize=5)
+
+        #8 - 1394613139
+
         ensemble = GBRT(td.df, vd.df, hyperparams=hyperParams, outputFile="final_model.txt")
         pickle_save('final_model.pkl', ensemble)
         ensemble = pickle_load('final_model.pkl')
@@ -136,7 +139,8 @@ def main():
 
         with open("output/prediction.csv", "w") as prediction:
             for index, row in test.iterrows():
-                prediction.write(str(row["Id"]) + "," + ensemble.Evaluate(row["SalePrice"]))
+                prediction.write(str(row["Id"]) + "," + ensemble.Evaluate(row))
+
 
 
 
