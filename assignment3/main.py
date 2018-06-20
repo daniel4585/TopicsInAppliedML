@@ -138,9 +138,11 @@ def main():
         test = pd.read_csv("data/test.csv")
         testData = ValidationData(test, td.cat_mapping, td.cat_mapping_avg, td.numerical_mapping)
 
-        with open("output/prediction.csv", "w") as prediction:
+        with open("output/submission.csv", "w") as prediction:
+            prediction.write("Id,SalePrice\n")
+
             for index, row in testData.df.iterrows():
-                prediction.write(str(row["Id"]) + "," + str(ensemble.Evaluate(row)))
+                prediction.write(str(int(row["Id"])) + "," + str(ensemble.Evaluate(row)) + "\n")
 
 
 
