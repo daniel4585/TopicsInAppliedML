@@ -136,10 +136,11 @@ def main():
 
         ensemble = pickle_load('final_model.pkl')
         test = pd.read_csv("data/test.csv")
+        testData = ValidationData(test, td.cat_mapping, td.cat_mapping_avg, td.numerical_mapping)
 
         with open("output/prediction.csv", "w") as prediction:
-            for index, row in test.iterrows():
-                prediction.write(str(row["Id"]) + "," + ensemble.Evaluate(row))
+            for index, row in testData.df.iterrows():
+                prediction.write(str(row["Id"]) + "," + str(ensemble.Evaluate(row)))
 
 
 
